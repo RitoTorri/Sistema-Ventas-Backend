@@ -30,8 +30,8 @@ async function bootstrap() {
   );
 
   const config = new DocumentBuilder()
-    .setTitle('AUTH API REST Documentation')
-    .setDescription('Role-Based Authentication and Authorization Service (RBAC)')
+    .setTitle('Sistema de Ventas')
+    .setDescription('API REST para el sistema de ventas')
     .setVersion('1.0')
     .addServer(`http://localhost:${port}`)
     .setContact(

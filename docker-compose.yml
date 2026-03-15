@@ -1,32 +1,21 @@
 services:
-  db-auth-api:
+  db-sistema-ventas:
     image: postgres:18-alpine
-    container_name: db-auth-api
-    environment:
-      - POSTGRES_USER=${DB_USERNAME}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - POSTGRES_DB=${DB_NAME}
+    container_name: db-sistema-ventas-container
     ports:
-      - "${DB_PORT}:${DB_PORT}"
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+    env_file:
+      - .env
     volumes:
       - postgres_data:/var/lib/postgresql/data
-  auth-api:
+  sistema-ventas:
     build: .
-    container_name: auth-api
+    container_name: sistema-ventas-container
     ports: 
       - "${PORT}:${PORT}"
-    environment:
-      - PORT=${PORT}
-      - API_RATE_LIMIT_MAX=${API_RATE_LIMIT_MAX}
-      - API_RATE_LIMIT_WINDOW=${API_RATE_LIMIT_WINDOW}
-      - TOKEN_ACCESS=${TOKEN_ACCESS}
-      - TOKEN_ACCESS_REFRESH=${TOKEN_ACCESS_REFRESH}
-      - DB_HOST=${DB_HOST}
-      - DB_PORT=${DB_PORT}
-      - DB_USERNAME=${DB_USERNAME}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - DB_NAME=${DB_NAME}
+    env_file:
+      - .env
     depends_on:
-      - db-auth-api
+      - db-sistema-ventas
 volumes:
   postgres_data:

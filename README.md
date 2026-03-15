@@ -1,6 +1,8 @@
 # 📋 Acerca de este proyecto
 
-Sistema robusto de autenticación y control de acceso basado en **JWT (JSON Web Tokens)** con arquitectura RBAC (Role-Based Access Control). Diseñado para gestionar de manera eficiente y segura la identidad de usuarios, sus roles y permisos dentro de la aplicación.
+Este proyecto consiste en el diseño y estructuración de una Base de Datos Relacional para un Sistema de Gestión de Ventas e Inventario, optimizada para garantizar la integridad de los datos, la trazabilidad de las operaciones y la persistencia de información histórica.
+
+El sistema está pensado para manejar el flujo completo de una transacción comercial: desde la catalogación de productos hasta el registro detallado de pagos y la auditoría de registros.
 
 <br>
 
@@ -68,7 +70,7 @@ Si quieres ver las propiedades de las entidades, puedes ir a este sitio: [MER co
 
 ### ⌨️ Codigo de la Base de datos
 
-Puedes ver el codigo de la base de datos [📍Aqui](https://github.com/RitoTorri/AuthAPI/blob/master/database/DB.sql)
+Puedes ver el codigo de la base de datos [📍Aqui](https://github.com/RitoTorri/Sistema-Ventas-Backend/blob/main/database/DB.sql)
 
 <br>
 
@@ -85,10 +87,10 @@ Puedes ver el codigo de la base de datos [📍Aqui](https://github.com/RitoTorri
 ### 📦 Instalación:
 ```bash
 # Clona el repositorio
-git clone https://github.com/RitoTorri/AuthAPI
+git clone https://github.com/RitoTorri/Sistema-Ventas-Backend
 
 # Entra al directorio
-cd AuthAPI
+cd Sistema-Ventas-Backend
 
 # Instala las dependencias
 npm install
