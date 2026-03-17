@@ -15,16 +15,16 @@ export class Product {
     @Column({ nullable: false })
     id_category: number;
 
-    @Column({ length: 255, unique: true })
+    @Column({ length: 255, unique: true, nullable: false })
     name: string;
 
-    @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+    @Column({ type: 'decimal', precision: 10, scale: 2, default: 0, nullable: false })
     cost_price: number; // Precio al que le compras al proveedor
 
-    @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+    @Column({ type: 'decimal', precision: 10, scale: 2, default: 0, nullable: false })
     price: number; // Precio al que le vendes al cliente (unit_price)
 
-    @Column({ type: 'int', default: 0 })
+    @Column({ type: 'int', default: 0, nullable: false })
     stock: number;
 
     @Column({ type: 'boolean', default: true })
@@ -33,10 +33,10 @@ export class Product {
     @CreateDateColumn()
     created_at: Date;
 
-    @UpdateDateColumn()
+    @UpdateDateColumn({ default: null })
     updated_at: Date | null;
 
-    @DeleteDateColumn()
+    @DeleteDateColumn({ default: null })
     deleted_at: Date | null;
 
     @ManyToOne(() => Category, (category) => category.products)

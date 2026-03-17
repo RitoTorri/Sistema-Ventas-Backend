@@ -1,6 +1,6 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Request } from 'express';
-import { verifyToken } from 'src/shared/utils/tokens.utils';
+import { verifyToken } from '../../shared/utils/tokens.utils';
 
 @Injectable()
 export class VerifyRefreshTokenGuard implements CanActivate {
@@ -18,7 +18,7 @@ export class VerifyRefreshTokenGuard implements CanActivate {
       request['token-refresh'] = payload; 
       request['raw-refresh-token'] = token; // Guardamos el string original por si acaso
       
-    } catch (error) {
+    } catch (error : any) {
       if (error.name === 'JsonWebTokenError') {
         throw new UnauthorizedException('Token inválido');
       }

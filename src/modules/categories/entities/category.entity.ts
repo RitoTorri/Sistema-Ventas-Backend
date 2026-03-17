@@ -9,7 +9,7 @@ export class Category {
     @PrimaryGeneratedColumn()
     id_category: number;
 
-    @Column({ length: 100 })
+    @Column({ length: 100, unique: true, nullable: false })
     name: string;
 
     @Column({ type: 'text', nullable: true })

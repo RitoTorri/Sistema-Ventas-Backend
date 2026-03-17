@@ -11,6 +11,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { PermissionsController } from './modules/permissions/permissions.controller';
 import { CategoriesModule } from './modules/categories/categories.module';
 import { ProductsModule } from './modules/products/products.module';
+import { SuppliersModule } from './modules/suppliers/suppliers.module';
 
 @Module({
   imports: [
@@ -39,6 +40,8 @@ import { ProductsModule } from './modules/products/products.module';
     CategoriesModule,
 
     ProductsModule,
+
+    SuppliersModule,
   ],
   controllers: [PermissionsController]
 })
