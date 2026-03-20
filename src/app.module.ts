@@ -12,6 +12,7 @@ import { PermissionsController } from './modules/permissions/permissions.control
 import { CategoriesModule } from './modules/categories/categories.module';
 import { ProductsModule } from './modules/products/products.module';
 import { SuppliersModule } from './modules/suppliers/suppliers.module';
+import { CustomersModule } from './modules/customers/customers.module';
 
 @Module({
   imports: [
@@ -42,6 +43,8 @@ import { SuppliersModule } from './modules/suppliers/suppliers.module';
     ProductsModule,
 
     SuppliersModule,
+
+    CustomersModule,
   ],
   controllers: [PermissionsController]
 })
