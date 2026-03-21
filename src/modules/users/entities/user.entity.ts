@@ -3,12 +3,12 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 
 @Entity('users')
 export class User {
-    @PrimaryGeneratedColumn()
-    userId: number;
+    @PrimaryGeneratedColumn({ name: 'userId' })
+    id_user: number;
 
     // Columna fisica de la DB
-    @Column({ nullable: false })
-    roleId: number;
+    @Column({ name: 'roleId', nullable: false })
+    id_role: number;
 
     @Column({ nullable: false, length: 100 })
     name: string;

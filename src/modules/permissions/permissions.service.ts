@@ -10,7 +10,7 @@ export class PermissionsService {
         private dataSource: DataSource,
     ) { }
 
-    async create(moduleId: number) {
+    async create(id_module: number) {
         const queryRunner = this.dataSource.createQueryRunner();
 
         await queryRunner.connect();
@@ -18,7 +18,7 @@ export class PermissionsService {
 
         try {
             // Validar existencia (Por si acaso XD)
-            const moduleExists = await queryRunner.manager.findOne(Modul, { where: { moduleId: moduleId } })
+            const moduleExists = await queryRunner.manager.findOne(Modul, { where: { id_module: id_module } })
 
             if (!moduleExists) throw new Error('Module not found');
 
@@ -26,7 +26,7 @@ export class PermissionsService {
 
             const permissionsToCreate = actions.map((action) => {
                 return queryRunner.manager.create(Permission, {
-                    moduleId: moduleId, // Usamos el ID recibido
+                    id_module: id_module, // Usamos el ID recibido
                     typePermission: action,
                 });
             });
@@ -48,7 +48,7 @@ export class PermissionsService {
 
     async findById(id: number) {
         try {
-            return await this.dataSource.getRepository(Permission).findOne({ where: { permissionId: id } });
+            return await this.dataSource.getRepository(Permission).findOne({ where: { id_permission: id } });
         } catch (error) { throw error; }
     }
 
@@ -60,17 +60,17 @@ export class PermissionsService {
                 take: limit,               // Cuántos traer (LIMIT)
                 skip: (page - 1) * limit,  // Cuántos saltar (OFFSET)
                 select: {
-                    permissionId: true,      // Ajusta según los nombres exactos de tus columnas
+                    id_permission: true,      // Ajusta según los nombres exactos de tus columnas
                     typePermission: true,
                     active: true,
                     // Si tiene módulo relacionado:
                     modul: {
-                        moduleId: true,
+                        id_module: true,
                         name: true,
                     },
                 },
                 relations: ['modul'],      // Carga la relación con el módulo
-                order: { permissionId: 'ASC' },
+                order: { id_permission: 'ASC' },
             });
 
             // 2. Retornamos la estructura estandarizada

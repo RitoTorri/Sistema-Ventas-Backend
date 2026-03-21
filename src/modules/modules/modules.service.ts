@@ -22,7 +22,7 @@ export class ModulesService {
       const newModule = this.moduleRespository.create(createModuleDto);
       const moduleSaved = await this.moduleRespository.save(newModule);
 
-      const permissionsCreated = await this.permissionsService.create(moduleSaved.moduleId);
+      const permissionsCreated = await this.permissionsService.create(moduleSaved.id_module);
       return { ...moduleSaved, permissions_created: permissionsCreated.length };
     } catch (error) { throw error; }
   }
@@ -31,8 +31,8 @@ export class ModulesService {
   async findAll(active: boolean): Promise<Modul[]> {
     try {
       return await this.moduleRespository.find({
-        select: ['moduleId', 'name', 'active', 'createdAt'],
-        order: { moduleId: 'ASC' },
+        select: ['id_module', 'name', 'active', 'createdAt'],
+        order: { id_module: 'ASC' },
         where: { active: active },
         withDeleted: true,
       });
@@ -84,8 +84,8 @@ export class ModulesService {
     try {
       return await this.moduleRespository.findOne({
         where: { name },
-        select: ['moduleId', 'name', 'active'],
-        order: { moduleId: 'ASC' },
+        select: ['id_module', 'name', 'active'],
+        order: { id_module: 'ASC' },
         withDeleted: true
       });
     } catch (error) { throw error; }
@@ -95,8 +95,8 @@ export class ModulesService {
   async findById(id: number) {
     try {
       return await this.moduleRespository.findOne({
-        where: { moduleId: id },
-        select: ['moduleId', 'name', 'active'],
+        where: { id_module: id },
+        select: ['id_module', 'name', 'active'],
         withDeleted: true
       });
     } catch (error) { throw error; }

@@ -19,7 +19,7 @@ export class UsersService {
     const userExists = await this.findByEmail(createUserDto.email);
     if (userExists !== null) throw new ConflictException('Ya existe un usuario con ese correo electrónico');
 
-    const roleExists = await this.rolesService.findById(createUserDto.roleId);
+    const roleExists = await this.rolesService.findById(createUserDto.id_role);
     if (!roleExists) throw new NotFoundException('Rol no encontrado');
     if (!roleExists.active) throw new ConflictException('Rol está inactivo');
 
@@ -42,14 +42,14 @@ export class UsersService {
       take: limit,
       skip: (page - 1) * limit,
       select: {
-        userId: true,
+        id_user: true,
         name: true,
         email: true,
         active: true,
-        role: { roleId: true, name: true },
+        role: { id_role: true, name: true },
       },
       relations: ['role'],
-      order: { userId: 'ASC' },
+      order: { id_user: 'ASC' },
       withDeleted: true,
     });
 
@@ -73,7 +73,7 @@ export class UsersService {
 
     if (updateUserDto.email) {
       const emailExists = await this.findByEmail(updateUserDto.email);
-      if (emailExists && emailExists.userId !== id) throw new ConflictException('Ya existe un usuario con ese correo electrónico');
+      if (emailExists && emailExists.id_user !== id) throw new ConflictException('Ya existe un usuario con ese correo electrónico');
     }
 
     if (updateUserDto.password) {
@@ -107,7 +107,7 @@ export class UsersService {
   async findByEmail(email: string) {
     return await this.userRepository.findOne({
       where: { email: email },
-      select: ['userId', 'name', 'email', 'roleId', 'password', 'active'],
+      select: ['id_user', 'name', 'email', 'id_role', 'password', 'active'],
       relations: ['role'],
       withDeleted: true,
     });
@@ -115,8 +115,8 @@ export class UsersService {
 
   async findById(id: number) {
     return await this.userRepository.findOne({
-      where: { userId: id },
-      select: ['userId', 'name', 'email', 'roleId', 'password', 'active'],
+      where: { id_user: id },
+      select: ['id_user', 'name', 'email', 'id_role', 'password', 'active'],
       relations: ['role'],
       withDeleted: true,
     });

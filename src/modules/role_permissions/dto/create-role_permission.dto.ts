@@ -10,7 +10,7 @@ export class CreateRolePermissionDto {
     })
     @IsInt()
     @Min(1)
-    roleId: number;
+    id_role: number;
 
     @ApiProperty({
         example: 1,
@@ -20,5 +20,5 @@ export class CreateRolePermissionDto {
     })
     @IsInt()
     @Min(1)
-    permissionId: number;
+    id_permission: number;
 }

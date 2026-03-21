@@ -6,7 +6,7 @@ import { RolePermission } from '../../role_permissions/entities/role_permission.
 @Entity("roles")
 export class Role {
     @PrimaryGeneratedColumn()
-    roleId: number;
+    id_role: number;
 
     @Column({ unique: true, nullable: false, length: 50 })
     name: string;

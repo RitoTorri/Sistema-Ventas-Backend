@@ -5,7 +5,7 @@ import { OneToMany } from 'typeorm';
 @Entity("modules")
 export class Modul {
     @PrimaryGeneratedColumn()
-    moduleId: number;
+    id_module: number;
 
     @Column({ unique: true, nullable: false, length: 50 })
     name: string;

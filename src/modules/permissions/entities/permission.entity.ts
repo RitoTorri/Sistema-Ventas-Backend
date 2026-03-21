@@ -7,10 +7,10 @@ import { RolePermission } from '../../../modules/role_permissions/entities/role_
 @Unique(['modul', 'typePermission'])
 export class Permission {
   @PrimaryGeneratedColumn()
-  permissionId: number;
+  id_permission: number;
 
   @Column({ nullable: false })
-  moduleId: number;
+  id_module: number;
 
   @Column({
     type: 'enum',
@@ -33,6 +33,6 @@ export class Permission {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
-  @JoinColumn({ name: 'moduleId', })
+  @JoinColumn({ name: 'id_module'})
   modul: Modul;
 }

@@ -10,7 +10,7 @@ export class CreateUserDto {
     @IsNotEmpty()
     @IsNumber()
     @Min(1)
-    roleId: number;
+    id_role: number;
 
     @ApiProperty({ example: 'Jesus', required: true, })
     @IsNotEmpty()

@@ -13,18 +13,18 @@ import { Role } from '../../../modules/roles/entities/role.entity'; // Ajusta la
 import { Permission } from '../../../modules/permissions/entities/permission.entity';
 
 @Entity('roles_permissions')
-@Unique(['roleId', 'permissionId']) // Garantiza que un rol no tenga el mismo permiso dos veces
+@Unique(['id_role', 'id_permission']) // Garantiza que un rol no tenga el mismo permiso dos veces
 export class RolePermission {
 
     @PrimaryGeneratedColumn()
-    rolePermissionId: number;
+    id_role_permission: number;
 
     // Declaramos la columna física para manejar IDs directamente
     @Column()
-    roleId: number;
+    id_role: number;
 
     @Column()
-    permissionId: number;
+    id_permission: number;
 
     @Column({ default: true })
     active: boolean;
@@ -43,12 +43,12 @@ export class RolePermission {
     @ManyToOne(() => Role, (role) => role.rolesPermissions, {
         onDelete: 'CASCADE',
     })
-    @JoinColumn({ name: 'roleId' })
+    @JoinColumn({ name: 'id_role' })
     role: Role;
 
     @ManyToOne(() => Permission, {
         onDelete: 'CASCADE',
     })
-    @JoinColumn({ name: 'permissionId' })
+    @JoinColumn({ name: 'id_permission' })
     permission: Permission;
 }

@@ -24,8 +24,8 @@ export class RolesService {
   async findAll(): Promise<Role[]> {
     return await this.roleRepository.find({
       where: { active: true },
-      select: ['roleId', 'name', 'active'],
-      order: { roleId: 'ASC' },
+      select: ['id_role', 'name', 'active'],
+      order: { id_role: 'ASC' },
       withDeleted: true,
     });
   }
@@ -38,7 +38,7 @@ export class RolesService {
 
     if (updateRoleDto.name) {
       const roleWithSameName = await this.findByName(updateRoleDto.name);
-      if (roleWithSameName !== null && roleWithSameName.roleId !== id) throw new ConflictException('Ya existe un rol con ese nombre');
+      if (roleWithSameName !== null && roleWithSameName.id_role !== id) throw new ConflictException('Ya existe un rol con ese nombre');
     }
 
     const updateRole = await this.roleRepository.merge(roleExists, updateRoleDto);
@@ -70,16 +70,16 @@ export class RolesService {
   async findByName(name: string) {
     return await this.roleRepository.findOne({
       where: { name: name },
-      select: ['roleId', 'name', 'active'],
-      order: { roleId: 'ASC' },
+      select: ['id_role', 'name', 'active'],
+      order: { id_role: 'ASC' },
       withDeleted: true,
     });
   }
 
   async findById(id: number) {
     return await this.roleRepository.findOne({
-      where: { roleId: id },
-      select: ['roleId', 'name', 'active'],
+      where: { id_role: id },
+      select: ['id_role', 'name', 'active'],
       withDeleted: true,
     });
   }

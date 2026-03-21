@@ -24,17 +24,17 @@ export class AuthService {
       const passwordIsCorrect = await bcrypt.compare(loginDto.password, user.password);
       if (!passwordIsCorrect) throw new UnauthorizedException('Contraseña incorrecta');
 
-      const permissions = await this.getUserPermissions(user.userId);
+      const permissions = await this.getUserPermissions(user.id_user);
 
       // Token Acces
-      const tokenAccessPayload = { userId: user.userId, roleId: user.roleId };
+      const tokenAccessPayload = { userId: user.id_user, roleId: user.id_role };
       const tokenAccess = generateToken(tokenAccessPayload, process.env.TOKEN_ACCESS || 'access_secret', '20m');
 
       return {
-        userId: user.userId,
+        userId: user.id_user,
         name: user.name,
         email: user.email,
-        role: { roleId: user.roleId, name: user.role.name },
+        role: { roleId: user.id_role, name: user.role.name },
         permissions: permissions,
         tokens: tokenAccess
       };
@@ -50,7 +50,7 @@ export class AuthService {
       .innerJoin('role.users', 'user')
       .innerJoin('rp.permission', 'permission')
       .innerJoin('permission.modul', 'module')
-      .where('user.userId = :userId', { userId })
+      .where('user.id_user = :userId', { userId })
       .andWhere('rp.active = true')
       .andWhere('permission.active = true')
       .andWhere('module.active = true')
