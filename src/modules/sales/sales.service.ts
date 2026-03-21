@@ -69,9 +69,9 @@ export class SalesService {
         });
         saleItems.push(newItem);
 
-        // 5. Actualización de Stock
-        product.stock_current -= itemDto.quantity;
-        await transactionalEntityManager.save(product);
+        // 5. Actualización de Stock - No se modifica el stock aun
+        // product.stock_current -= itemDto.quantity;
+        // await transactionalEntityManager.save(product);
       }
 
       // 6. Persistencia de la Venta y sus Detalles (vía Cascade)
@@ -173,9 +173,21 @@ export class SalesService {
       throw new ConflictException('Status de pago no válido. Intente con otro.');
     }
 
-    saleExists.status = updateSaleDto.status;
-    saleExists.updated_at = new Date();
-    return await this.saleRepository.save(saleExists);
+    return await this.saleRepository.manager.transaction(async (manager) => {
+      // Traemos los items con sus relaciones para evitar buscar uno por uno luego
+      const saleItems = await manager.find(SaleItem, {
+        where: { id_sale: id },
+      });
+
+      // Modificamos el stock de los productos
+      for (const item of saleItems) {
+        await this.productsService.decrementStock(item.id_product, item.quantity);
+      }
+
+      saleExists.status = updateSaleDto.status;
+      saleExists.updated_at = new Date();
+      return await manager.save(saleExists);
+    });
   }
 
   async findSaleById(id: number) {

@@ -59,7 +59,7 @@ export class ProductsService {
         },
         active: true,
       },
-      order: { id_product: 'DESC', },
+      order: { id_product: 'ASC', },
       relations: { category: true },
       withDeleted: true,
     });
@@ -150,5 +150,25 @@ export class ProductsService {
       select: ['id_product', 'name', 'sku', 'price', 'stock_current', 'stock_min', 'stock_max', 'id_category', 'active'],
       withDeleted: true
     });
+  }
+
+  async incremetnStock(id: number, quantity: number) {
+    const product = await this.findById(id);
+
+    if (!product) throw new NotFoundException('No existe un producto con el ID proporcionado');
+    if (!product.active) throw new ConflictException('El producto no está activo. No puede ser modificado');
+    
+    product.stock_current += quantity;
+    return await this.productRepository.save(product);
+  }
+
+  async decrementStock(id: number, quantity: number) {
+    const product = await this.findById(id);
+
+    if (!product) throw new NotFoundException('No existe un producto con el ID proporcionado');
+    if (!product.active) throw new ConflictException('El producto no está activo. No puede ser modificado');
+
+    product.stock_current -= quantity;
+    return await this.productRepository.save(product);
   }
 }

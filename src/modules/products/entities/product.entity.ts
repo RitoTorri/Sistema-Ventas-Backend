@@ -4,6 +4,7 @@ import {
 } from 'typeorm';
 import { Category } from '../../categories/entities/category.entity';
 import { SaleItem } from '../../sales-items/entities/sale-items.entity/sale-items.entity';
+import { PurchaseItem } from '../../purchases_items/entities/purchase_items.entity';
 
 @Entity('products')
 export class Product {
@@ -50,7 +51,6 @@ export class Product {
   @OneToMany(() => SaleItem, (item) => item.product)
   sale_items: SaleItem[];
 
-  /*
   @OneToMany(() => PurchaseItem, (item) => item.product)
-  purchase_items: PurchaseItem[]; */
+  purchase_items: PurchaseItem[];
 }

@@ -15,6 +15,7 @@ import { SuppliersModule } from './modules/suppliers/suppliers.module';
 import { CustomersModule } from './modules/customers/customers.module';
 import { PaymentMethodsModule } from './modules/payment_methods/payment_methods.module';
 import { SalesModule } from './modules/sales/sales.module';
+import { PurchasesModule } from './modules/purchases/purchases.module';
 
 @Module({
   imports: [
@@ -51,6 +52,8 @@ import { SalesModule } from './modules/sales/sales.module';
     PaymentMethodsModule,
 
     SalesModule,
+
+    PurchasesModule,
   ],
   controllers: [PermissionsController]
 })

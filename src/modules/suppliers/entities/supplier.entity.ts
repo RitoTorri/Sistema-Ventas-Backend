@@ -2,7 +2,7 @@ import {
     Entity, PrimaryGeneratedColumn, Column, CreateDateColumn,
     UpdateDateColumn, DeleteDateColumn, ManyToOne, OneToMany, JoinColumn
 } from 'typeorm';
-
+import { Purchase } from '../../purchases/entities/purchase.entity';
 
 @Entity('suppliers')
 export class Supplier {
@@ -39,6 +39,6 @@ export class Supplier {
   @DeleteDateColumn({ default: null })
   deleted_at: Date  | null;
 
-  /*@OneToMany(() => Purchase, (purchase) => purchase.supplier)
-  purchases: Purchase[];*/
+  @OneToMany(() => Purchase, (purchase) => purchase.supplier)
+  purchases: Purchase[];
 }
