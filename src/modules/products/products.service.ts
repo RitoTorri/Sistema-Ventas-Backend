@@ -139,7 +139,7 @@ export class ProductsService {
   async findProductBySku(sku: string) {
     return await this.productRepository.findOne({
       where: { sku: sku.toUpperCase() },
-      select: ['id_product', 'name', 'sku', 'price', 'price', 'stock_current', 'stock_min', 'stock_max', 'id_category', 'active'],
+      select: ['id_product', 'name', 'sku', 'price', 'stock_current', 'stock_min', 'stock_max', 'id_category', 'active'],
       withDeleted: true
     });
   }
@@ -147,7 +147,7 @@ export class ProductsService {
   async findById(id: number) {
     return await this.productRepository.findOne({
       where: { id_product: id },
-      select: ['id_product', 'name', 'sku', 'price', 'price', 'stock_current', 'stock_min', 'stock_max', 'id_category', 'active'],
+      select: ['id_product', 'name', 'sku', 'price', 'stock_current', 'stock_min', 'stock_max', 'id_category', 'active'],
       withDeleted: true
     });
   }

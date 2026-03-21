@@ -3,6 +3,7 @@ import {
     UpdateDateColumn, DeleteDateColumn, ManyToOne, OneToMany, JoinColumn
 } from 'typeorm';
 import { Category } from '../../categories/entities/category.entity';
+import { SaleItem } from '../../sales-items/entities/sale-items.entity/sale-items.entity';
 
 @Entity('products')
 export class Product {
@@ -46,9 +47,10 @@ export class Product {
   @JoinColumn({ name: 'id_category' })
   category: Category;
 
-  /* @OneToMany(() => SaleItem, (item) => item.product)
+  @OneToMany(() => SaleItem, (item) => item.product)
   sale_items: SaleItem[];
 
+  /*
   @OneToMany(() => PurchaseItem, (item) => item.product)
   purchase_items: PurchaseItem[]; */
 }

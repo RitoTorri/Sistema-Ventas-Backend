@@ -1,45 +1,40 @@
 import { IsInt, Min, Max, IsBoolean, IsOptional, IsString } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
-import { ApiPropertyOptional } from '@nestjs/swagger'; // <--- Importante
+import { ApiPropertyOptional } from '@nestjs/swagger';
 
 export class PaginationDto {
-    @ApiPropertyOptional({ default: true, type: Boolean })
+    @ApiPropertyOptional({ 
+        default: true, 
+        type: Boolean,
+        description: 'Filtrar por registros activos o inactivos' 
+    })
     @IsOptional()
     @Transform(({ value }) => {
-        if (value === 'true') return true;
-        if (value === 'false') return false;
-        return value; // Si ya es boolean (por default), lo deja pasar
+        if (value === 'true' || value === true) return true;
+        if (value === 'false' || value === false) return false;
+        return true; // Valor por defecto si mandan basura o nada
     })
-    @IsBoolean() // Esto validará que DESPUÉS del Transform, sea un booleano
-    active;
+    @IsBoolean()
+    active: boolean = true; // <--- Definir el tipo y el default aquí evita el "fallo"
 
-    @ApiPropertyOptional({
-        default: 1,
-        description: 'Número de la página'
-    })
+    @ApiPropertyOptional({ default: 1 })
     @IsOptional()
+    @Type(() => Number) // Convertimos el string de la URL a Number
     @IsInt()
     @Min(1)
-    @Type(() => Number)
     page: number = 1;
 
-    @ApiPropertyOptional({
-        default: 10,
-        maximum: 100,
-        description: 'Cantidad de registros por página'
-    })
+    @ApiPropertyOptional({ default: 10 })
     @IsOptional()
+    @Type(() => Number)
     @IsInt()
     @Min(1)
     @Max(100)
-    @Type(() => Number)
     limit: number = 10;
 
-    @ApiPropertyOptional({
-        default: '',
-        description: 'Parámetro de búsqueda. Nombres, Cedula, Apellidos, etc.'
-    })
+    @ApiPropertyOptional({ default: '' })
     @IsOptional()
     @IsString()
+    @Transform(({ value }) => value?.trim()) // Limpiamos espacios extras
     param?: string;
 }

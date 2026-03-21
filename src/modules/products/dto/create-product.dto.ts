@@ -39,14 +39,6 @@ export class CreateProductDto {
     price: number;
 
     @ApiProperty({
-        description: 'Precio de costo (compra al proveedor)',
-        example: 950.00,
-    })
-    @IsNumber({ maxDecimalPlaces: 2 })
-    @Min(0)
-    cost_price: number;
-
-    @ApiProperty({
         description: 'Cantidad inicial en almacén',
         example: 10,
         default: 0,

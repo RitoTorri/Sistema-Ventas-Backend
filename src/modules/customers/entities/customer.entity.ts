@@ -2,6 +2,7 @@ import {
     Entity, PrimaryGeneratedColumn, Column, CreateDateColumn,
     UpdateDateColumn, DeleteDateColumn, OneToMany
 } from 'typeorm';
+import { Sale } from '../../sales/entities/sale.entity';
 
 @Entity('customers')
 export class Customer {
@@ -35,6 +36,6 @@ export class Customer {
     @DeleteDateColumn({ type: 'timestamp', nullable: true })
     deleted_at: Date | null;
 
-    /* @OneToMany(() => Sale, (sale) => sale.customer)
-    sales: Sale[];*/
+    @OneToMany(() => Sale, (sale) => sale.customer)
+    sales: Sale[];
 }
