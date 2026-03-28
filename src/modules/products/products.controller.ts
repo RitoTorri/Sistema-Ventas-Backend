@@ -16,7 +16,7 @@ export class ProductsController {
     const product = await this.productsService.create(createProductDto);
     return {
       data: product,
-      message: 'Producto creado con éxito',
+      message: 'Product created successfully',
     }
   }
 
@@ -25,7 +25,7 @@ export class ProductsController {
   @HttpCode(200)
   async findAll(@Query() paginationDto: PaginationDto) {
     const result = await this.productsService.findAll(paginationDto);
-    if (result.data.length === 0) throw new NotFoundException({ data: result, message: 'Productos no encontrados' });
+    if (result.data.length === 0) throw new NotFoundException('Products not found');
     return { message: 'Lista de productos encontrados', data: result }
   }
 
@@ -34,7 +34,7 @@ export class ProductsController {
   @HttpCode(204)
   async update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
     await this.productsService.update(+id, updateProductDto);
-    return {}
+    return;
   }
 
   @Docs.deleteProduct()
@@ -42,7 +42,7 @@ export class ProductsController {
   @HttpCode(204)
   async remove(@Param('id') id: string) {
     await this.productsService.remove(+id);
-    return {}
+    return;
   }
 
   @Docs.restoreProduct()
@@ -50,6 +50,6 @@ export class ProductsController {
   @HttpCode(204)
   async restore(@Param('id', ParseIntPipe) id: string) {
     await this.productsService.restore(+id);
-    return {}
+    return;
   }
 }

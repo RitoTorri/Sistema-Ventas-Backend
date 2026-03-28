@@ -37,7 +37,7 @@ export class SuppliersController {
   @HttpCode(204)
   async update(@Param('id', ParseIntPipe) id: string, @Body() updateSupplierDto: UpdateSupplierDto) {
     await this.suppliersService.update(+id, updateSupplierDto);
-    return {};
+    return;
   }
 
   @Docs.restoreSupplier()
@@ -45,7 +45,7 @@ export class SuppliersController {
   @HttpCode(204)
   async restore(@Param('id', ParseIntPipe) id: string) {
     await this.suppliersService.restore(+id);
-    return {};
+    return;
   }
 
   @Docs.deleteSupplier()
@@ -53,6 +53,6 @@ export class SuppliersController {
   @HttpCode(204)
   async remove(@Param('id', ParseIntPipe) id: string) {
     await this.suppliersService.remove(+id);
-    return {};
+    return;
   }
 }

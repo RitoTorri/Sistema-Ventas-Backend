@@ -114,7 +114,7 @@ export class SalesService {
         { ...baseConditions, customer: { first_name: ILike(`%${param}%`) } },
         { ...baseConditions, customer: { last_name: ILike(`%${param}%`) } },
         { ...baseConditions, invoice_number: ILike(`%${param}%`) },
-        { ...baseConditions, status: param.toUpperCase() },
+        { ...baseConditions, sale_status: param.toUpperCase() },
       ] : baseConditions, // Si no hay param, solo usa las condiciones base
       take: limit,
       skip: (page - 1) * limit,
@@ -124,7 +124,7 @@ export class SalesService {
       select: {
         id_sale: true,
         invoice_number: true,
-        status: true,
+        sale_status: true,
         sale_date: true,
         total_amount: true,
         created_at: true,
@@ -164,13 +164,13 @@ export class SalesService {
     const saleExists = await this.findSaleById(id);
     if (!saleExists) throw new NotFoundException('No existe un sale con el ID proporcionado');
 
-    // Validamos que el status sea válido
-    if (saleExists.status !== 'PENDING') {
-      throw new ConflictException('Solo las ventas con status PENDING pueden ser actualizadas');
+    // Validamos que el sale_status sea válido
+    if (saleExists.sale_status !== 'PENDING') {
+      throw new ConflictException('Solo las ventas con sale_status PENDING pueden ser actualizadas');
     }
 
     if (!Object.values(PaymentStatus).includes(updateSaleDto.status)) {
-      throw new ConflictException('Status de pago no válido. Intente con otro.');
+      throw new ConflictException('sale_status de pago no válido. Intente con otro.');
     }
 
     return await this.saleRepository.manager.transaction(async (manager) => {
@@ -184,7 +184,7 @@ export class SalesService {
         await this.productsService.decrementStock(item.id_product, item.quantity);
       }
 
-      saleExists.status = updateSaleDto.status;
+      saleExists.sale_status = updateSaleDto.status;
       saleExists.updated_at = new Date();
       return await manager.save(saleExists);
     });
@@ -193,7 +193,7 @@ export class SalesService {
   async findSaleById(id: number) {
     return await this.saleRepository.findOne({
       where: { id_sale: id },
-      select: ['id_sale', 'id_customer', 'id_payment_method', 'total_amount', 'sale_date', 'invoice_number', 'status', 'created_at'],
+      select: ['id_sale', 'id_customer', 'id_payment_method', 'total_amount', 'sale_date', 'invoice_number', 'sale_status', 'created_at'],
       withDeleted: true
     });
   }

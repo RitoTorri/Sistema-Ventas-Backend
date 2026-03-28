@@ -1,4 +1,6 @@
 import { Module } from '@nestjs/common';
+import { APP_FILTER } from '@nestjs/core';
+import { GeneralExceptionFilter } from './shared/filters/catch_exeptions.filters';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm'; // Carga de la configuración de TypeORM
 import { TypeOrmConfigService } from './config/typeorm.config';
@@ -58,6 +60,10 @@ import { ReportsModule } from './modules/reports/reports.module';
 
     ReportsModule,
   ],
-  controllers: [PermissionsController]
+  controllers: [PermissionsController],
+  providers: [{
+    provide: APP_FILTER,
+    useClass: GeneralExceptionFilter,
+  }]
 })
 export class AppModule { }

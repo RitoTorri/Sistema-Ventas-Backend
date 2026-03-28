@@ -1,9 +1,7 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Res, ParseBoolPipe, ParseIntPipe, Query } from '@nestjs/common';
-import type { Response } from 'express';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Res, ParseBoolPipe, ParseIntPipe, Query, HttpCode } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import responses from '../../shared/utils/responses';
 import { PaginationDto } from '../../shared/dto/pagination.dto';
 import Docs from './users.swagger';
 
@@ -13,37 +11,46 @@ export class UsersController {
 
   @Docs.createUser()
   @Post()
-  async create(@Res() res: Response, @Body() createUserDto: CreateUserDto) {
+  @HttpCode(201)
+  async create(@Body() createUserDto: CreateUserDto) {
     const user = await this.usersService.create(createUserDto);
-    return responses.responseSuccessful(res, 201, 'Usuario creado exitosamente', user);
+    return {
+      data: user,
+      message: 'Usuario creado exitosamente',
+    }
   }
 
   @Docs.findAllUsers()
   @Get()
-  async findAll(@Res() res: Response, @Query() paginationDto: PaginationDto) {
+  @HttpCode(200)
+  async findAll(@Query() paginationDto: PaginationDto) {
     const { active, page = 1, limit = 10, param = '' } = paginationDto;
     const users = await this.usersService.findAll(active, page, limit, param);
-    return responses.responseSuccessful(res, 200, 'Usuarios obtenidos exitosamente', users);
+    if (users.data.length === 0) throw new Error('No hay usuarios registrados');
+    return { message: 'Listado de usuarios exitoso', data: users };
   }
 
   @Docs.updateUser()
   @Patch(':id')
-  async update(@Res() res: Response, @Param('id', ParseIntPipe) id: string, @Body() updateUserDto: UpdateUserDto) {
+  @HttpCode(204)
+  async update(@Param('id', ParseIntPipe) id: string, @Body() updateUserDto: UpdateUserDto) {
     await this.usersService.update(+id, updateUserDto);
-    return responses.responseSuccessful(res, 204);
+    return;
   }
 
   @Docs.restoreUser()
   @Patch('restore/:id')
-  async restore(@Res() res: Response, @Param('id', ParseIntPipe) id: string) {
+  @HttpCode(204)
+  async restore(@Param('id', ParseIntPipe) id: string) {
     await this.usersService.restore(+id);
-    return responses.responseSuccessful(res, 204);
+    return;
   }
 
   @Docs.deleteUser()
   @Delete(':id')
-  async remove(@Res() res: Response, @Param('id', ParseIntPipe) id: string) {
+  @HttpCode(204)
+  async remove(@Param('id', ParseIntPipe) id: string) {
     await this.usersService.remove(+id);
-    return responses.responseSuccessful(res, 204);
+    return;
   }
 }

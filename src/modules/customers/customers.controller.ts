@@ -7,7 +7,7 @@ import Docs from './customers.swagger';
 
 @Controller('customers')
 export class CustomersController {
-  constructor(private readonly customersService: CustomersService) {}
+  constructor(private readonly customersService: CustomersService) { }
 
   @Docs.createCustomer()
   @Post()
@@ -25,7 +25,7 @@ export class CustomersController {
   @HttpCode(200)
   async findAll(@Query() paginationDto: PaginationDto) {
     const result = await this.customersService.findAll(paginationDto);
-    if (result.data.length === 0) throw new NotFoundException({ data: result, message: 'Customers not found' });
+    if (result.data.length === 0) throw new NotFoundException('Customers not found');
     return { message: 'Customers found successfully', data: result }
   }
 
@@ -34,7 +34,7 @@ export class CustomersController {
   @HttpCode(204)
   async update(@Param('id') id: string, @Body() updateCustomerDto: UpdateCustomerDto) {
     await this.customersService.update(+id, updateCustomerDto);
-    return {}
+    return;
   }
 
   @Docs.restoreCustomer()
@@ -42,7 +42,7 @@ export class CustomersController {
   @HttpCode(204)
   async restore(@Param('id') id: string) {
     await this.customersService.restore(+id);
-    return {}
+    return;
   }
 
   @Docs.deleteCustomer()
@@ -50,6 +50,6 @@ export class CustomersController {
   @HttpCode(204)
   async remove(@Param('id') id: string) {
     await this.customersService.remove(+id);
-    return {}
+    return;
   }
 }

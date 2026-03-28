@@ -7,7 +7,7 @@ import Docs from './payment_methods.swagger';
 
 @Controller('payment-methods')
 export class PaymentMethodsController {
-  constructor(private readonly paymentMethodsService: PaymentMethodsService) {}
+  constructor(private readonly paymentMethodsService: PaymentMethodsService) { }
 
   @Docs.createPaymentMethod()
   @Post()
@@ -25,7 +25,7 @@ export class PaymentMethodsController {
   @HttpCode(200)
   async findAll(@Query() paginationDto: PaginationDto) {
     const result = await this.paymentMethodsService.findAll(paginationDto);
-    if (result.data.length === 0) throw new NotFoundException({ data: result, message: 'Payment methods not found' });
+    if (result.data.length === 0) throw new NotFoundException('Payment methods not found');
     return { message: 'Payment methods found successfully', data: result };
   }
 
@@ -34,7 +34,7 @@ export class PaymentMethodsController {
   @HttpCode(204)
   async update(@Param('id', ParseIntPipe) id: number, @Body() updatePaymentMethodDto: UpdatePaymentMethodDto) {
     await this.paymentMethodsService.update(id, updatePaymentMethodDto);
-    return {};
+    return;
   }
 
   @Docs.restorePaymentMethod()
@@ -42,7 +42,7 @@ export class PaymentMethodsController {
   @HttpCode(204)
   async restore(@Param('id', ParseIntPipe) id: number) {
     await this.paymentMethodsService.restore(id);
-    return {};
+    return;
   }
 
   @Docs.deletePaymentMethod()
@@ -50,6 +50,6 @@ export class PaymentMethodsController {
   @HttpCode(204)
   async remove(@Param('id', ParseIntPipe) id: number) {
     await this.paymentMethodsService.remove(id);
-    return {};
+    return;
   }
 }

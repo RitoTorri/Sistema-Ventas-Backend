@@ -81,7 +81,6 @@ export class CategoriesService {
   }
 
   async findById(id: number) {
-
     return await this.categoryRepository.findOne({
       where: { id_category: id },
       select: ['id_category', 'name', 'description', 'active'],

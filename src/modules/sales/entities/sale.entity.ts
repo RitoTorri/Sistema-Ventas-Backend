@@ -29,7 +29,7 @@ export class Sale {
     enum: PaymentStatus, 
     default: PaymentStatus.PENDING 
   })
-  status: PaymentStatus;
+  sale_status: PaymentStatus;
 
   @CreateDateColumn({ type: 'timestamp' })
   created_at: Date;
