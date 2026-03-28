@@ -74,7 +74,7 @@ export class PurchasesService {
         ...createPurchaseDto,
         total_amount: totalPurchaseAmount,
         // Generamos un número de factura único (puedes luego implementar un correlativo real)
-        invoice_number: `PUR-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+        invoice_number: `FAC-${new Date().getFullYear()}-${Math.floor(Math.random() * 1000)}`,
         items: purchaseItems,
       });
 

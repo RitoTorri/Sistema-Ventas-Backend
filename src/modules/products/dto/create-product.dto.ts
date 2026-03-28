@@ -54,16 +54,8 @@ export class CreateProductDto {
     })
     @IsInt()
     @Min(0)
+    @IsPositive()
     stock_min: number;
-
-    @ApiProperty({
-        description: 'Cantidad minima de stock por producto',
-        example: 10,
-        default: 0,
-    })
-    @IsInt()
-    @Min(0)
-    stock_max: number;
 
     @ApiProperty({
         description: 'ID de la categoría a la que pertenece',

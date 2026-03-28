@@ -9,13 +9,13 @@ export class Customer {
     @PrimaryGeneratedColumn()
     id_customer: number;
 
-    @Column({ length: 100 })
+    @Column({ length: 100, nullable: false })
     first_name: string;
 
-    @Column({ length: 100, nullable: true })
+    @Column({ length: 100, nullable: false })
     last_name: string;
 
-    @Column({ length: 30, nullable: true })
+    @Column({ length: 30, nullable: false })
     ci: string
 
     @Column({ length: 255, unique: true, nullable: true })

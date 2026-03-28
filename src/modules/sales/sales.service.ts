@@ -79,7 +79,7 @@ export class SalesService {
         ...createSaleDto,
         total_amount: totalSaleAmount,
         // Generamos un número de factura único (puedes luego implementar un correlativo real)
-        invoice_number: `INV-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+        invoice_number: `FAC-${new Date().getFullYear()}-${Math.floor(Math.random() * 1000)}`,
         items: saleItems,
       });
 

@@ -1,0 +1,2 @@
+CREATE TYPE actions_permissions AS ENUM('CREATE','UPDATE','DELETE','READ');
+CREATE TYPE sale_purchase_status AS ENUM ('PENDING', 'PAID', 'CANCELLED', 'REFUNDED');
