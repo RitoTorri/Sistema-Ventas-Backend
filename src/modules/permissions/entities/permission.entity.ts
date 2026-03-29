@@ -14,7 +14,8 @@ export class Permission {
 
   @Column({
     type: 'enum',
-    enum: actionsPermissions
+    enum: actionsPermissions,
+    enumName: 'actions_permissions',
   })
   typePermission: actionsPermissions;
 

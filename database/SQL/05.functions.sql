@@ -61,3 +61,63 @@ BEGIN
     LIMIT 5;
 END; 
 $$ LANGUAGE plpgsql;
+
+-- Function que devuleve los 5 clientes mas frecuentes en un rango de fechas
+CREATE OR REPLACE FUNCTION get_five_customers_most_purchases(
+    date1 TIMESTAMP, 
+    date2 TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+RETURNS TABLE(
+    first_name VARCHAR,
+    last_name VARCHAR,
+    total_sales INTEGER,
+    total_amount DECIMAL(10,2)
+) AS $$
+BEGIN 
+    RETURN QUERY
+    SELECT 
+        c.first_name::VARCHAR,
+        c.last_name::VARCHAR AS client,
+        COUNT(s.id_sale)::INTEGER AS total_sales,
+        SUM(s.total_amount)::DECIMAL(10,2) AS total_amount
+    FROM customers c 
+    INNER JOIN sales s ON s.id_customer = c.id_customer
+    WHERE
+        s.sale_status = 'PAID'  
+        AND s.sale_date::DATE BETWEEN date1::DATE AND date2::DATE
+    GROUP BY(c.first_name, c.last_name)
+    ORDER BY total_sales DESC LIMIT 10;
+END; 
+$$ LANGUAGE plpgsql;
+
+-- Funciion que devuelve los 10 proveedores mas frecuentes en un rango de fechas
+CREATE OR REPLACE FUNCTION get_top_suppliers(
+    date1 TIMESTAMP,
+    date2 TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+RETURNS TABLE(
+    id_supplier INTEGER,
+    company_name VARCHAR,
+    rif VARCHAR,
+    total_purchases INTEGER,
+    total_amount DECIMAL(10,2)
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        s.id_supplier,
+        s.company_name,
+        s.rif,
+        COUNT(p.id_purchase)::INTEGER AS total_purchases,
+        SUM(p.total_amount)::DECIMAL(10,2) AS total_amount
+    FROM suppliers s
+    INNER JOIN purchases p ON p.id_supplier = s.id_supplier
+    WHERE 
+        p.purchase_status = 'PAID'
+        AND p.purchase_date::DATE BETWEEN date1::DATE AND date2::DATE
+    GROUP BY s.id_supplier, s.company_name, s.rif
+    ORDER BY total_purchases DESC, total_amount DESC
+    LIMIT 10;
+END;
+$$ LANGUAGE plpgsql;
+

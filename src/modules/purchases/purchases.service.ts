@@ -12,6 +12,7 @@ import { QueryDateDto } from '../../shared/dto/query.date.dto';
 import { ProductsService } from '../products/products.service';
 import { SuppliersService } from '../suppliers/suppliers.service';
 import { PaymentMethodsService } from '../payment_methods/payment_methods.service';
+import { Product } from '../products/entities/product.entity';
 
 @Injectable()
 export class PurchasesService {
@@ -118,7 +119,7 @@ export class PurchasesService {
       select: {
         id_purchase: true,
         invoice_number: true,
-        status: true,
+        purchase_status: true,
         purchase_date: true,
         total_amount: true,
         created_at: true,
@@ -156,26 +157,42 @@ export class PurchasesService {
     const purchaseExists = await this.findPurchaseById(id);
     if (!purchaseExists) throw new NotFoundException('No existe una compra con el ID proporcionado');
 
-    if (purchaseExists.status !== PaymentStatus.PENDING) {
+    if (purchaseExists.purchase_status !== PaymentStatus.PENDING) {
       throw new ConflictException('Solo las compras con status PENDING pueden ser actualizadas');
     }
 
-    // Usamos el EntityManager para asegurar que si el stock falla, la compra no cambie de status
-    return await this.purchaseRepository.manager.transaction(async (manager) => {
+    // Actualizar precio: costo + porcentaje
+    let percentage = Number(process.env.PORCENTAGE_AUMENT_FOR_PURCHASE); // Este es un numero entero
 
+    // Validamos que sea numero entero positivo
+    if (isNaN(percentage)) {
+      throw new ConflictException('La variable de entorno PORCENTAGE_AUMENT_FOR_PURCHASE no es un número válido');
+    }
+
+    if (percentage <= 0) {
+      throw new ConflictException(`El porcentaje debe ser mayor a 0. Valor actual: ${percentage}`);
+    }
+
+    return await this.purchaseRepository.manager.transaction(async (manager) => {
       if (updatePurchaseDto.status === PaymentStatus.PAID) {
-        // Traemos los items con sus relaciones para evitar buscar uno por uno luego
         const purchaseItems = await manager.find(PurchaseItem, {
           where: { id_purchase: id },
         });
 
-        // Modificamos el stock de los productos
         for (const item of purchaseItems) {
+          // Incrementar stock
           await this.productsService.incremetnStock(item.id_product, item.quantity);
+
+          const newPrice = item.cost_price + (item.cost_price * percentage / 100);
+
+          await manager.update(Product, item.id_product, {
+            price: parseFloat(newPrice.toFixed(2)),
+            updated_at: new Date()
+          });
         }
       }
 
-      purchaseExists.status = updatePurchaseDto.status;
+      purchaseExists.purchase_status = updatePurchaseDto.status;
       purchaseExists.updated_at = new Date();
       return await manager.save(purchaseExists);
     });
@@ -184,7 +201,7 @@ export class PurchasesService {
   async findPurchaseById(id: number) {
     return await this.purchaseRepository.findOne({
       where: { id_purchase: id },
-      select: ['id_purchase', 'id_supplier', 'id_payment_method', 'total_amount', 'purchase_date', 'invoice_number', 'status', 'created_at'],
+      select: ['id_purchase', 'id_supplier', 'id_payment_method', 'total_amount', 'purchase_date', 'invoice_number', 'purchase_status', 'created_at'],
       withDeleted: true
     });
   }

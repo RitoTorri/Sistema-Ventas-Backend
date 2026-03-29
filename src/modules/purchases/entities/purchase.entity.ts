@@ -36,9 +36,10 @@ export class Purchase {
     @Column({ 
         type: 'enum', 
         enum: PaymentStatus, 
-        default: PaymentStatus.PENDING 
+        default: PaymentStatus.PENDING,
+        enumName: 'sale_purchase_status',
     })
-    status: PaymentStatus;
+    purchase_status: PaymentStatus;
 
     @CreateDateColumn({ type: 'timestamp' })
     created_at: Date;

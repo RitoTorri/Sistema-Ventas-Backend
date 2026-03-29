@@ -27,7 +27,8 @@ export class Sale {
   @Column({ 
     type: 'enum', 
     enum: PaymentStatus, 
-    default: PaymentStatus.PENDING 
+    default: PaymentStatus.PENDING,
+    enumName: 'sale_purchase_status',
   })
   sale_status: PaymentStatus;
 

@@ -11,7 +11,6 @@ export class CreateModuleDto {
         maxLength: 50,
     })
     @IsNotEmpty()
-    @IsLowercase()
     @IsString()
     @MinLength(3)
     @MaxLength(50)
