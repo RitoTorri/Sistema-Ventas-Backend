@@ -73,7 +73,7 @@ export class ReportsController {
     return await this.reportsService.getFiveProductsMoreSales(startDate, endDate);
   }
 
-  // Top 5 clientes más frecuentes
+  // Top 10 clientes más frecuentes
   @Docs.getTopCustomers()
   @HttpCode(200)
   @Get('top-customers')

@@ -42,7 +42,7 @@ function getTopCustomers() {
     return applyDecorators(
         ApiOperation({
             summary: 'Top 5 clientes con más compras',
-            description: 'Retorna los 5 clientes que más compras han realizado en un rango de fechas'
+            description: 'Retorna los 10 clientes que más compras han realizado en un rango de fechas'
         }),
         ApiQuery({ name: 'date1', required: true, type: String, example: '2026-01-01' }),
         ApiQuery({ name: 'date2', required: false, type: String, example: '2026-12-31' }),

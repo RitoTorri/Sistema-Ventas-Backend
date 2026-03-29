@@ -12,30 +12,100 @@ export class ReportsService {
     // 1. Productos con stock mínimo
     async getProductsMinStock() {
         return await this.dataSource.query(`
-      SELECT * FROM get_products_min_stock
-    `);
+            SELECT
+                p.name AS name_product,
+                c.name AS name_category,
+                p.stock_current,
+                p.stock_min,
+                COUNT(*) OVER () AS total_products_stock_min,
+                CASE
+                    WHEN p.stock_current = 0 THEN 'AGOTADO'
+                    ELSE 'CRITICO'
+                END AS prioridad
+            FROM
+                products p
+                INNER JOIN categories c ON p.id_category = c.id_category
+            WHERE
+                stock_current <= stock_min
+            ORDER BY
+                p.stock_current ASC
+        `);
     }
 
     // 2. Productos sin ventas en 30 días
     async getProductsWithoutSales30Days() {
         return await this.dataSource.query(`
-      SELECT * FROM products_without_sales_30days
-    `);
+            SELECT
+                p.id_product,
+                p.name AS product_name,
+                c.name AS category_name,
+                p.stock_current
+            FROM
+                products p
+                INNER JOIN categories c ON c.id_category = p.id_category
+            WHERE
+                p.active = TRUE
+                AND p.deleted_at IS NULL
+                AND p.stock_current > 0
+                AND NOT EXISTS (
+                    SELECT
+                        1
+                    FROM
+                        sales_items si
+                        INNER JOIN sales s ON s.id_sale = si.id_sale
+                    WHERE
+                        si.id_product = p.id_product
+                        AND s.sale_status = 'PAID'
+                        AND s.sale_date >= CURRENT_DATE - INTERVAL '30 days'
+                )
+            ORDER BY
+                p.stock_current DESC
+        `);
     }
 
     // 3. Resumen inventario (costo vs venta)
     async getInventorySummaryCostVsSale() {
         return await this.dataSource.query(`
-      SELECT * FROM inventory_summary_cost_vs_sale
-    `);
+            SELECT
+                COUNT(DISTINCT p.id_product) AS total_products_with_stock,
+                SUM(p.stock_current) AS total_units,
+                SUM(p.stock_current * COALESCE(pi.cost_price, 0)) AS total_inventory_cost,
+                SUM(p.stock_current * p.price) AS total_inventory_sale_value,
+                SUM(
+                    (p.stock_current * p.price) - (p.stock_current * COALESCE(pi.cost_price, 0))
+                ) AS total_profit_potential
+            FROM
+                products p
+                INNER JOIN categories c ON c.id_category = p.id_category
+                LEFT JOIN (
+                    SELECT DISTINCT
+                        ON (pi.id_product) pi.id_product,
+                        pi.cost_price
+                    FROM
+                        purchases_items pi
+                        INNER JOIN purchases pu ON pu.id_purchase = pi.id_purchase
+                    WHERE
+                        pu.purchase_status = 'PAID'
+                    ORDER BY
+                        pi.id_product,
+                        pu.purchase_date DESC
+                ) pi ON pi.id_product = p.id_product
+            WHERE
+                p.active = TRUE
+                AND p.deleted_at IS NULL
+                AND p.stock_current > 0
+        `);
     }
 
     /**
- * Total de ventas en un rango de fechas
- */
+     * Total de ventas en un rango de fechas
+     */
     async getSalesCountByDate(date1: string, date2: string) {
         const result = await this.dataSource.query(
-            `SELECT * FROM get_sales_count_by_date($1, $2)`,
+            `SELECT COUNT(*)::INTEGER AS sales_count 
+             FROM sales 
+             WHERE sale_status = 'PAID' 
+                 AND sale_date::DATE BETWEEN $1::DATE AND $2::DATE`,
             [date1, date2]
         );
         return {
@@ -52,7 +122,10 @@ export class ReportsService {
      */
     async getPurchasesCountByDate(date1: string, date2: string) {
         const result = await this.dataSource.query(
-            `SELECT * FROM get_purchases_count_by_date($1, $2)`,
+            `SELECT COUNT(*)::INTEGER AS purchases_count 
+             FROM purchases 
+             WHERE purchase_status = 'PAID' 
+                 AND purchase_date::DATE BETWEEN $1::DATE AND $2::DATE`,
             [date1, date2]
         );
         return {
@@ -69,7 +142,22 @@ export class ReportsService {
      */
     async getFiveProductsMoreSales(date1: string, date2: string) {
         const results = await this.dataSource.query(
-            `SELECT * FROM get_five_products_more_sales($1, $2)`,
+            `SELECT 
+                p.id_product,  
+                c.name::VARCHAR AS category,
+                p.name::VARCHAR AS product_name,
+                p.sku::VARCHAR AS code_sku,
+                p.price::NUMERIC AS price_unit,
+                SUM(si.quantity)::INTEGER AS total_items_sale
+            FROM products p
+            INNER JOIN categories c ON c.id_category = p.id_category
+            INNER JOIN sales_items si ON si.id_product = p.id_product
+            INNER JOIN sales s ON s.id_sale = si.id_sale
+            WHERE s.sale_status = 'PAID' 
+                AND s.sale_date::DATE BETWEEN $1::DATE AND $2::DATE
+            GROUP BY p.id_product, c.name, p.name, p.sku, p.price
+            ORDER BY total_items_sale DESC, total_items_sale ASC
+            LIMIT 5`,
             [date1, date2]
         );
         return {
@@ -87,7 +175,18 @@ export class ReportsService {
      */
     async getFiveCustomersMostPurchases(date1: string, date2: string) {
         const results = await this.dataSource.query(
-            `SELECT * FROM get_five_customers_most_purchases($1, $2)`,
+            `SELECT 
+                c.first_name::VARCHAR,
+                c.last_name::VARCHAR AS client,
+                COUNT(s.id_sale)::INTEGER AS total_sales,
+                SUM(s.total_amount)::DECIMAL(10,2) AS total_amount
+            FROM customers c 
+            INNER JOIN sales s ON s.id_customer = c.id_customer
+            WHERE
+                s.sale_status = 'PAID'  
+                AND s.sale_date::DATE BETWEEN $1::DATE AND $2::DATE
+            GROUP BY(c.first_name, c.last_name)
+            ORDER BY total_sales DESC LIMIT 10`,
             [date1, date2]
         );
         return {
@@ -106,7 +205,19 @@ export class ReportsService {
     async getTopSuppliers(date1: string, date2: string) {
         console.log(date2);
         const results = await this.dataSource.query(
-            `SELECT * FROM get_top_suppliers($1, $2)`,
+            `SELECT 
+                s.id_supplier,
+                s.company_name,
+                s.rif,
+                COUNT(p.id_purchase)::INTEGER AS total_purchases,
+                SUM(p.total_amount)::DECIMAL(10,2) AS total_amount
+            FROM suppliers s
+            INNER JOIN purchases p ON p.id_supplier = s.id_supplier
+            WHERE 
+                p.purchase_status = 'PAID'
+                AND p.purchase_date::DATE BETWEEN $1::DATE AND $2::DATE
+            GROUP BY s.id_supplier, s.company_name, s.rif
+            ORDER BY total_purchases DESC, total_amount DESC LIMIT 10`,
             [date1, date2]
         );
         return {
