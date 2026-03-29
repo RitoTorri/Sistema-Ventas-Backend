@@ -84,6 +84,7 @@ Puedes ver el codigo de la base de datos [📍Aqui](https://github.com/RitoTorri
 - **RBAC Dinámico:** Control total basado en roles y permisos para gestionar clientes, proveedores y usuarios.
 - **Auto-Seed de Permisos:** ⚡ Al registrar un nuevo módulo, el sistema vincula automáticamente los permisos de CRUD correspondientes en la DB.
 - **Seguridad:** Implementación de CORS y Rate Limiting para proteger los endpoints sensibles.
+- **Gestión de Ventas y Compras:** Manejo de transacciones de compras y ventas.
 - **Gestión de Clientes:** Registro, actualización y seguimiento de clientes con datos de contacto y documentos.
 - **Gestión de Proveedores:** Control de proveedores con RIF, datos de contacto y dirección fiscal.
 - **Gestión de Usuarios:** Administración de usuarios del sistema con roles y permisos asignados.
