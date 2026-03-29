@@ -1,26 +1,38 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Res, ParseBoolPipe, ParseIntPipe, Query, HttpCode } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ParseIntPipe,
+  Query,
+  HttpCode,
+  UseGuards,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PaginationDto } from '../../shared/dto/pagination.dto';
+import { VerifyTokenGuard } from '../../shared/guards/verify-token.guard';
 import Docs from './users.swagger';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) { }
+  constructor(private readonly usersService: UsersService) {}
 
   @Docs.createUser()
+  //@UseGuards(VerifyTokenGuard)
   @Post()
   @HttpCode(201)
   async create(@Body() createUserDto: CreateUserDto) {
     const user = await this.usersService.create(createUserDto);
-    return {
-      data: user,
-      message: 'Usuario creado exitosamente',
-    }
+    return { message: 'Usuario creado exitosamente', data: user };
   }
 
   @Docs.findAllUsers()
+  //@UseGuards(VerifyTokenGuard)
   @Get()
   @HttpCode(200)
   async findAll(@Query() paginationDto: PaginationDto) {
@@ -31,14 +43,19 @@ export class UsersController {
   }
 
   @Docs.updateUser()
+  //@UseGuards(VerifyTokenGuard)
   @Patch(':id')
   @HttpCode(204)
-  async update(@Param('id', ParseIntPipe) id: string, @Body() updateUserDto: UpdateUserDto) {
+  async update(
+    @Param('id', ParseIntPipe) id: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
     await this.usersService.update(+id, updateUserDto);
     return;
   }
 
   @Docs.restoreUser()
+  //@UseGuards(VerifyTokenGuard)
   @Patch('restore/:id')
   @HttpCode(204)
   async restore(@Param('id', ParseIntPipe) id: string) {
@@ -47,6 +64,7 @@ export class UsersController {
   }
 
   @Docs.deleteUser()
+  //@UseGuards(VerifyTokenGuard)
   @Delete(':id')
   @HttpCode(204)
   async remove(@Param('id', ParseIntPipe) id: string) {

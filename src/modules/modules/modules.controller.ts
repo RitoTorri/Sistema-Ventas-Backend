@@ -6,14 +6,15 @@ import {
   Patch,
   Param,
   Delete,
-  Res,
   ParseBoolPipe,
   ParseIntPipe,
   HttpCode,
+  UseGuards,
 } from '@nestjs/common';
 import { ModulesService } from './modules.service';
 import { CreateModuleDto } from './dto/create-module.dto';
 import { UpdateModuleDto } from './dto/update-module.dto';
+import { VerifyTokenGuard } from '../../shared/guards/verify-token.guard';
 import Docs from './modules.swagger';
 
 @Controller('modules')
@@ -21,6 +22,7 @@ export class ModulesController {
   constructor(private readonly modulesService: ModulesService) { }
 
   @Docs.createdModule()
+  //@UseGuards(VerifyTokenGuard)
   @Post()
   @HttpCode(201)
   async create(@Body() createModuleDto: CreateModuleDto) {
@@ -32,10 +34,10 @@ export class ModulesController {
   }
 
   @Docs.findAllModules()
+  //@UseGuards(VerifyTokenGuard)
   @Get(':active')
   @HttpCode(200)
   async findAll(
-    @Res() res: Response,
     @Param('active', ParseBoolPipe) active: boolean,
   ) {
     const modules = await this.modulesService.findAll(active);
@@ -44,10 +46,10 @@ export class ModulesController {
   }
 
   @Docs.updateModule()
+  //@UseGuards(VerifyTokenGuard)
   @Patch(':id')
   @HttpCode(204)
   async update(
-    @Res() res: Response,
     @Param('id') id: string,
     @Body() updateModuleDto: UpdateModuleDto,
   ) {
@@ -56,6 +58,7 @@ export class ModulesController {
   }
 
   @Docs.restoreModule()
+  //@UseGuards(VerifyTokenGuard)
   @Patch('restore/:id')
   @HttpCode(204)
   async restore(@Param('id', ParseIntPipe) id: string) {
@@ -64,6 +67,7 @@ export class ModulesController {
   }
 
   @Docs.deleteModule()
+  //@UseGuards(VerifyTokenGuard)
   @Delete(':id')
   @HttpCode(204)
   async remove(@Param('id', ParseIntPipe) id: string) {

@@ -21,8 +21,8 @@ async function bootstrap() {
   // Habilitar el pipe de validación de forma global
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true,       // Elimina propiedades que no estén en el DTO
-      transform: true,       // ¡CLAVE! Transforma los tipos automáticamente
+      whitelist: true, // Elimina propiedades que no estén en el DTO
+      transform: true, // ¡CLAVE! Transforma los tipos automáticamente
       transformOptions: {
         enableImplicitConversion: true,
       },
@@ -37,7 +37,18 @@ async function bootstrap() {
     .setContact(
       'Jesus Francisco Cortez Torres',
       'https://rito-torri-mi-portfolio.netlify.app/',
-      'cortezfrancisco025@gmail.com'
+      'cortezfrancisco025@gmail.com',
+    )
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'JWT',
+        description: 'Ingresa tu token JWT',
+        in: 'header',
+      },
+      'access-token', // Este es el nombre interno de la estrategia
     )
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);

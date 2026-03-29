@@ -43,7 +43,7 @@ export class AuthService {
   }
 
   // La función de mapeo de permisos por modulos
-  private async getUserPermissions(userId: number) {
+  public async getUserPermissions(userId: number) {
     const permissions = await this.rolePermissionRepository
       .createQueryBuilder('rp')
       .innerJoin('rp.role', 'role')
