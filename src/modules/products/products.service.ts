@@ -13,26 +13,23 @@ export class ProductsService {
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
     private readonly categoriesService: CategoriesService,
-  ) { }
+  ) {}
 
   async create(createProductDto: CreateProductDto) {
-    // Validamos que el nombre del producto no exista
-    const isProductNameExist = await this.findProductByName(createProductDto.name);
-    if (isProductNameExist) throw new ConflictException('El nombre del producto ya existe. Intente con otro.');
-
-    // Validamos que el SKU no exista
-    const isProductSkuExist = await this.findProductBySku(createProductDto.sku);
-    if (isProductSkuExist) throw new ConflictException('El SKU ya existe. Ingrese otro SKU');
+    // Buscaos duplicados
+    await this.findDuplicates(null, createProductDto.name, createProductDto.sku);
 
     // Validar que exista la categoria
     const isCategoryExist = await this.categoriesService.findById(createProductDto.id_category);
+
     if (!isCategoryExist) throw new NotFoundException('La categoría no existe. Intente con otra.');
-    if (!isCategoryExist.active) throw new ConflictException('La categoría no está activa. No puede ser asignada a este producto');
+
+    if (!isCategoryExist.active)
+      throw new ConflictException('La categoría no está activa. No puede ser asignada a este producto');
 
     // Creamos el producto
     const productCreated = this.productRepository.create(createProductDto);
-    const productSaved = await this.productRepository.save(productCreated);
-    return productSaved;
+    return await this.productRepository.save(productCreated);
   }
 
   async findAll(paginationDto: PaginationDto) {
@@ -40,7 +37,7 @@ export class ProductsService {
       where: [
         { active: paginationDto.active, name: ILike(`%${paginationDto.param?.toUpperCase()}%`) },
         { active: paginationDto.active, sku: paginationDto.param },
-        { active: paginationDto.active, category: { name: ILike(`%${paginationDto.param?.toUpperCase()}%`) } }
+        { active: paginationDto.active, category: { name: ILike(`%${paginationDto.param?.toUpperCase()}%`) } },
       ],
       take: paginationDto.limit,
       skip: (paginationDto.page - 1) * paginationDto.limit,
@@ -51,7 +48,6 @@ export class ProductsService {
         price: true,
         stock_current: true,
         stock_min: true,
-        stock_max: true,
         category: {
           id_category: true,
           name: true,
@@ -59,9 +55,8 @@ export class ProductsService {
         },
         active: true,
       },
-      order: { id_product: 'ASC', },
+      order: { id_product: 'ASC' },
       relations: { category: true },
-      withDeleted: true,
     });
 
     return {
@@ -71,9 +66,9 @@ export class ProductsService {
         totalCounts: products.length,
         itemPerPage: paginationDto.limit,
         totalPages: Math.ceil(total / paginationDto.limit),
-        currentPage: paginationDto.page
-      }
-    }
+        currentPage: paginationDto.page,
+      },
+    };
   }
 
   async update(id: number, updateProductDto: UpdateProductDto) {
@@ -82,23 +77,15 @@ export class ProductsService {
     if (!isProductExist) throw new NotFoundException('No existe un producto con el ID proporcionado');
     if (!isProductExist.active) throw new ConflictException('El producto no está activo. No puede ser modificado');
 
-    // Validamos que el nombre del producto no exista
-    if (updateProductDto.name) {
-      const isProductNameExist = await this.findProductByName(updateProductDto.name);
-      if (isProductNameExist) throw new ConflictException('El nombre del producto ya existe. Intente con otro.');
-    }
-
-    // Validamos que el SKU no exista
-    if (updateProductDto.sku) {
-      const isProductSkuExist = await this.findProductBySku(updateProductDto.sku);
-      if (isProductSkuExist) throw new ConflictException('El SKU ya existe. Ingrese otro SKU');
-    }
+    // Buscamos duplicados
+    await this.findDuplicates(id, updateProductDto.name ?? null, updateProductDto.sku ?? null);
 
     // Validar que exista la categoria
     if (updateProductDto.id_category) {
       const isCategoryExist = await this.categoriesService.findById(updateProductDto.id_category);
       if (!isCategoryExist) throw new NotFoundException('La categoría no existe. Intente con otra.');
-      if (!isCategoryExist.active) throw new ConflictException('La categoría no está activa. No puede ser asignada a este producto');
+      if (!isCategoryExist.active)
+        throw new ConflictException('La categoría no está activa. No puede ser asignada a este producto');
     }
 
     isProductExist.updated_at = new Date();
@@ -121,7 +108,8 @@ export class ProductsService {
     // Validamos que el producto exista
     const isProductExist = await this.findById(id);
     if (!isProductExist) throw new NotFoundException('No existe un producto con el ID proporcionado');
-    if (!isProductExist.active) throw new ConflictException('El producto ya está eliminado. No puede ser eliminado nuevamente');
+    if (!isProductExist.active)
+      throw new ConflictException('El producto ya está eliminado. No puede ser eliminado nuevamente');
 
     isProductExist.active = false;
     isProductExist.deleted_at = new Date();
@@ -131,24 +119,52 @@ export class ProductsService {
   async findProductByName(name: string) {
     return await this.productRepository.findOne({
       where: { name: name.toUpperCase() },
-      select: ['id_product', 'name', 'sku', 'price', 'price', 'stock_current', 'stock_min', 'stock_max', 'id_category', 'active'],
-      withDeleted: true
+      select: [
+        'id_product',
+        'name',
+        'sku',
+        'price',
+        'price',
+        'stock_current',
+        'stock_min',
+        'id_category',
+        'active',
+      ],
+      withDeleted: true,
     });
   }
 
   async findProductBySku(sku: string) {
     return await this.productRepository.findOne({
       where: { sku: sku.toUpperCase() },
-      select: ['id_product', 'name', 'sku', 'price', 'stock_current', 'stock_min', 'stock_max', 'id_category', 'active'],
-      withDeleted: true
+      select: [
+        'id_product',
+        'name',
+        'sku',
+        'price',
+        'stock_current',
+        'stock_min',
+        'id_category',
+        'active',
+      ],
+      withDeleted: true,
     });
   }
 
   async findById(id: number) {
     return await this.productRepository.findOne({
       where: { id_product: id },
-      select: ['id_product', 'name', 'sku', 'price', 'stock_current', 'stock_min', 'stock_max', 'id_category', 'active'],
-      withDeleted: true
+      select: [
+        'id_product',
+        'name',
+        'sku',
+        'price',
+        'stock_current',
+        'stock_min',
+        'id_category',
+        'active',
+      ],
+      withDeleted: true,
     });
   }
 
@@ -157,7 +173,7 @@ export class ProductsService {
 
     if (!product) throw new NotFoundException('No existe un producto con el ID proporcionado');
     if (!product.active) throw new ConflictException('El producto no está activo. No puede ser modificado');
-    
+
     product.stock_current += quantity;
     return await this.productRepository.save(product);
   }
@@ -170,5 +186,40 @@ export class ProductsService {
 
     product.stock_current -= quantity;
     return await this.productRepository.save(product);
+  }
+
+  async findDuplicates(id: number | null, name: string | null, sku: string | null) {
+    // Condiciones
+    const whereConditions: Array<{
+      name?: string;
+      sku?: string;
+    }> = [];
+
+    // Agregamos condiciones al array
+    if (name) whereConditions.push({ name });
+    if (sku) whereConditions.push({ sku });
+
+    // Si no hay condiciones, devolvemos
+    if (whereConditions.length === 0) return;
+
+    // Buscamos duplicados
+    const products = await this.productRepository.find({
+      where: whereConditions,
+      select: ['id_product', 'name', 'sku', 'active'],
+      withDeleted: true,
+    });
+
+    for (const p of products) {
+      if (id && p.id_product === id) continue;
+
+      // Verificamos cada campo por separado
+      if (name && p.name === name) {
+        throw new ConflictException('Ya existe un producto con este nombre.');
+      }
+
+      if (sku && p.sku === sku) {
+        throw new ConflictException('Ya existe un producto con este SKU.');
+      }
+    }
   }
 }

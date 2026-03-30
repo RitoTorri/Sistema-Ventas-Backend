@@ -31,7 +31,8 @@ function updateSupplier() {
         }),
         ApiNoContentResponse({ description: 'Proveedor actualizado exitosamente' }),
         ApiNotFoundResponse({ description: 'No existe un proveedor con el ID proporcionado' }),
-        ApiConflictResponse({ description: 'RIF ya esta en uso o el email o phone ya estan en uso' })
+        ApiConflictResponse({ description: 'RIF ya esta en uso o el email o phone ya estan en uso' }),
+        ApiConflictResponse({ description: 'Proveedor ya esta inactivo. No puede ser modificado' })
     );
 }
 

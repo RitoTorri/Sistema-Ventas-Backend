@@ -18,10 +18,10 @@ export class Supplier {
   @Column({ length: 100, nullable: false })
   contact_name: string;
 
-  @Column({ length: 255, nullable: true })
+  @Column({ length: 255, nullable: true, unique: true })
   email: string;
 
-  @Column({ length: 20, nullable: false })
+  @Column({ length: 20, nullable: false, unique: true })
   phone: string;
 
   @Column({ type: 'text', nullable: false })

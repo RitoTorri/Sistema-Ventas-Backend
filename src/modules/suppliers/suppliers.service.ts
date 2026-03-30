@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  ConflictException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { Repository, ILike } from 'typeorm';
 import { Supplier } from './entities/supplier.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -15,28 +11,13 @@ export class SuppliersService {
   constructor(
     @InjectRepository(Supplier)
     private readonly supplierRepository: Repository<Supplier>,
-  ) { }
+  ) {}
 
   async create(createSupplierDto: CreateSupplierDto) {
-    // validamos que no exista el mismo RIF
-    const supllierByRif = await this.findByRif(createSupplierDto.rif);
-    if (supllierByRif) {
-      throw new ConflictException('El RIF ya está registrado para otro proveedor',);
-    }
+    const { rif, email, phone } = createSupplierDto; // Destructuramos los datos
 
-    // Validamos que no exista el mismo email
-    if (createSupplierDto.email) {
-      const supplierByEmail = await this.findByEmail(createSupplierDto.email);
-      if (supplierByEmail) {
-        throw new ConflictException('El email ya está registrado para otro proveedor',);
-      }
-    }
-
-    // Validamos que no exista el mismo phone
-    const supplierByPhone = await this.findByPhone(createSupplierDto.phone);
-    if (supplierByPhone) {
-      throw new ConflictException('El número telefónico ya está registrado para otro proveedor');
-    }
+    // Buscamos duplicados
+    await this.findDuplicates(rif ?? null, email ?? null, phone ?? null, null);
 
     // Creamos e insertamos el nuevo proveedor
     const newSupplier = this.supplierRepository.create(createSupplierDto);
@@ -53,7 +34,7 @@ export class SuppliersService {
       select: ['id_supplier', 'rif', 'company_name', 'contact_name', 'email', 'phone', 'address', 'active'],
       skip: paginationDto.limit * (paginationDto.page - 1),
       take: paginationDto.limit,
-      withDeleted: true,
+      order: { id_supplier: 'ASC' },
     });
 
     return {
@@ -63,9 +44,9 @@ export class SuppliersService {
         totalCounts: suppliers.length,
         itemPerPage: paginationDto.limit,
         totalPages: Math.ceil(total / paginationDto.limit),
-        currentPage: paginationDto.page
-      }
-    }
+        currentPage: paginationDto.page,
+      },
+    };
   }
 
   async update(id: number, updateSupplierDto: UpdateSupplierDto) {
@@ -74,29 +55,9 @@ export class SuppliersService {
     if (!supplierById) throw new NotFoundException('No existe el proveedor con ese ID');
     if (!supplierById.active) throw new ConflictException('Este proveedor esta inactivo. No puede ser modificado');
 
-    // validamos que no exista el mismo RIF
-    if (updateSupplierDto.rif) {
-      const supllierByRif = await this.findByRif(updateSupplierDto.rif);
-      if (supllierByRif) {
-        throw new ConflictException('El RIF ya está registrado para otro proveedor',);
-      }
-    }
-
-    // Validamos que no exista el mismo email
-    if (updateSupplierDto.email) {
-      const supplierByEmail = await this.findByEmail(updateSupplierDto.email);
-      if (supplierByEmail) {
-        throw new ConflictException('El email ya está registrado para otro proveedor',);
-      }
-    }
-
-    // Validamos que no exista el mismo phone
-    if (updateSupplierDto.phone) {
-      const supplierByPhone = await this.findByPhone(updateSupplierDto.phone);
-      if (supplierByPhone) {
-        throw new ConflictException('El número telefónico ya está registrado para otro proveedor');
-      }
-    }
+    // Buscamos duplicados
+    const { rif = null, email = null, phone = null } = updateSupplierDto;
+    await this.findDuplicates(rif ?? null, email ?? null, phone ?? null, id);
 
     // Actualizamos el proveedor
     supplierById.updated_at = new Date();
@@ -158,5 +119,46 @@ export class SuppliersService {
       select: ['id_supplier', 'rif', 'company_name', 'contact_name', 'email', 'phone', 'address', 'active'],
       withDeleted: true,
     });
+  }
+
+  async findDuplicates(rif: string | null, email: string | null, phone: string | null, idExclude: number | null) {
+    // Condiciones
+    const whereConditions: Array<{
+      rif?: string;
+      email?: string;
+      phone?: string;
+    }> = [];
+
+    // Agregamos condiciones al array
+    if (rif) whereConditions.push({ rif });
+    if (email) whereConditions.push({ email });
+    if (phone) whereConditions.push({ phone });
+
+    // Si no hay condiciones, devolvemos
+    if (whereConditions.length === 0) return;
+
+    // Buscamos duplicados
+    const suppliers = await this.supplierRepository.find({
+      where: whereConditions,
+      select: ['id_supplier', 'rif', 'email', 'phone', 'active'],
+      withDeleted: true,
+    });
+
+    for (const s of suppliers) {
+      if (idExclude && s.id_supplier === idExclude) continue;
+
+      // Verificamos cada campo por separado
+      if (rif && s.rif === rif) {
+        throw new ConflictException('Ya existe un proveedor con este RIF.');
+      }
+
+      if (email && s.email === email) {
+        throw new ConflictException('Ya existe un proveedor con este email.');
+      }
+
+      if (phone && s.phone === phone) {
+        throw new ConflictException('Ya existe un proveedor con este teléfono.');
+      }
+    }
   }
 }

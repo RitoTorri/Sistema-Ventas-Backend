@@ -29,9 +29,6 @@ export class Product {
   @Column({ type: 'int', nullable: true })
   stock_min: number;
 
-  @Column({ type: 'int', nullable: true })
-  stock_max: number;
-
   @Column({ type: 'boolean', default: true })
   active: boolean;
 
