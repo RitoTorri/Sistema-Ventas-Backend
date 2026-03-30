@@ -1,8 +1,30 @@
-# 📋 Acerca de este proyecto
+# 🛒 Sistema de Ventas e Inventario (Backend)
 
-Este proyecto consiste en el diseño y estructuración de una Base de Datos Relacional para un Sistema de Gestión de Ventas e Inventario, optimizada para garantizar la integridad de los datos, la trazabilidad de las operaciones y la persistencia de información histórica.
+Este proyecto consiste en el diseño y estructuración de una Base de Datos Relacional y una API REST para un Sistema de Gestión de Ventas e Inventario, optimizada para garantizar la integridad de los datos, la trazabilidad de las operaciones y la persistencia de información histórica.
 
 El sistema está pensado para manejar el flujo completo de una transacción comercial: desde la catalogación de productos hasta el registro detallado de pagos.
+
+### 🌟 Características principales de la API
+
+- **Autenticación y Autorización JWT:** Seguridad robusta mediante tokens JWT para proteger los endpoints y gestionar sesiones de usuario.
+- **RBAC Dinámico:** Control de acceso basado en roles y permisos, permitiendo una gestión granular de usuarios, clientes, proveedores y módulos.
+- **Auto-Seed de Permisos:** Al registrar un nuevo módulo, el sistema vincula automáticamente los permisos CRUD necesarios en la base de datos.
+- **Documentación Swagger:** Toda la API está documentada y disponible mediante Swagger para facilitar la integración y pruebas.
+- **Rate Limiting y CORS:** Protección avanzada de los endpoints sensibles mediante limitación de peticiones y configuración de CORS.
+- **Gestión completa de ventas y compras:** Endpoints para registrar, consultar y actualizar transacciones de ventas y compras.
+- **Gestión de inventario y productos:** Operaciones CRUD para productos, categorías y métodos de pago.
+- **Gestión de clientes y proveedores:** Registro, actualización y seguimiento de clientes y proveedores con validaciones y datos completos.
+- **Gestión de usuarios y roles:** Administración de usuarios, roles y permisos asignados, con endpoints para su gestión.
+- **Auditoría y trazabilidad:** Registro automático de fechas de creación, actualización y eliminación (created_at, updated_at, deleted_at) en todas las entidades principales.
+- **Inicialización automatizada:** Script de inicialización para preparar la base de datos y el entorno de ejecución tanto en desarrollo como en producción.
+
+### 📑 Índice
+
+- [Stack tecnológico](#️-stack-tecnológico)
+- [Arquitectura RBAC / MER del sistema](#️-arquitectura-rbac--mer-del-sistema)
+- [Configuración inicial](#-configuración-inicial)
+- [Guía de inicio rápido](#-guía-de-inicio-rápido)
+- [Documentación](#-documentación)
 
 <br>
 
@@ -76,19 +98,6 @@ El sistema está pensado para manejar el flujo completo de una transacción come
 ### ⌨️ Codigo de la Base de datos
 
 Puedes ver el codigo de la base de datos [📍Aqui](https://github.com/RitoTorri/Sistema-Ventas-Backend/tree/main/database/SQL)
-
-<br>
-
-# 🌟 Características Especiales
-
-- **RBAC Dinámico:** Control total basado en roles y permisos para gestionar clientes, proveedores y usuarios.
-- **Auto-Seed de Permisos:** ⚡ Al registrar un nuevo módulo, el sistema vincula automáticamente los permisos de CRUD correspondientes en la DB.
-- **Seguridad:** Implementación de CORS y Rate Limiting para proteger los endpoints sensibles.
-- **Gestión de Ventas y Compras:** Manejo de transacciones de compras y ventas.
-- **Gestión de Clientes:** Registro, actualización y seguimiento de clientes con datos de contacto y documentos.
-- **Gestión de Proveedores:** Control de proveedores con RIF, datos de contacto y dirección fiscal.
-- **Gestión de Usuarios:** Administración de usuarios del sistema con roles y permisos asignados.
-- **Auditoría:** Registro de fechas de creación y actualización (created_at, updated_at, deleted_at).
 
 <br>
 
