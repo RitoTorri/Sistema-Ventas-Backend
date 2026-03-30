@@ -22,6 +22,7 @@ El sistema está pensado para manejar el flujo completo de una transacción come
 
 - [Stack tecnológico](#️-stack-tecnológico)
 - [Arquitectura RBAC / MER del sistema](#️-arquitectura-rbac--mer-del-sistema)
+- [Instalación](#-instalación)
 - [Configuración inicial](#-configuración-inicial)
 - [Guía de inicio rápido](#-guía-de-inicio-rápido)
 - [Documentación](#-documentación)
@@ -101,9 +102,7 @@ Puedes ver el codigo de la base de datos [📍Aqui](https://github.com/RitoTorri
 
 <br>
 
-# 🔧 Configuración inicial
-
-### 📦 Instalación:
+# 📦 Instalación:
 
 ```bash
 # Clona el repositorio
@@ -119,6 +118,10 @@ npm install
 ### ⚠️ Importante:
 
 Si el proyecto es ejecutado de manera local, Recuerda crear la base de datos primero en PostgreSQL.
+
+<br>
+
+# 🔧 Configuración inicial
 
 ### 🔐 Variables de entorno (.env):
 
