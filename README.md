@@ -31,7 +31,7 @@ El sistema está pensado para manejar el flujo completo de una transacción come
 </div>
 
 <div align="center">
-  <img src="./database/MER/MER.png" alt="RBAC / MER" width="1000" height="400">
+  <img src="./src/database/MER/MER.png" alt="RBAC / MER" width="1000" height="400">
 </div>
 
 ### 🔑 Composición de los TOKENS (JWT)
@@ -131,28 +131,64 @@ Debes renombrar `.env.example` a `.env` y configurar:
 
 <br>
 
-# 🚀 Ejecución
+# 🚀 Guía de inicio rápido
 
-### 🐳 En Docker (producción):
+Este proyecto incluye un script de inicialización (`script.sh`) que configura la base de datos y arranca el servidor.  
+**Su comportamiento varía según el entorno:**
+
+- En **modo desarrollo**, solo debe ejecutarse **una vez** para preparar la base de datos.
+- En **modo producción** (Docker), el script se ejecuta automáticamente al levantar los contenedores.
+
+### 🐳 Docker (producción)
+
+Sigue estos pasos para levantar el proyecto con Docker:
 
 ```bash
-# SOLO PRODUCCIÓN
-# Construir imagen
+# Construir la imagen
 docker compose build
 
-# Ejecutar contenedores
+# Levantar los contenedores
 docker compose up
 ```
 
-### 💻 En local (desarrollo):
+> El script `script.sh` se ejecuta automáticamente dentro del contenedor y deja el servidor listo en modo producción.
+
+### 💻 Entorno local (desarrollo)
+
+#### 🔁 Primera vez
+
+Si es la primera vez que ejecutas el proyecto:
 
 ```bash
-# SOLO DESARROLLO
-# Modo hot-reload
+# Compilar el proyecto
+npm run build
+
+# Ejecutar el script de inicialización
+./script.sh
+```
+
+> ⚠️ Este script inicia el servidor en **modo producción**.  
+> Una vez que haya hecho su trabajo (configurar la base de datos y arrancar), puedes detenerlo con `Ctrl + C` y continuar con el modo desarrollo.
+
+#### 🔁 Ejecuciones posteriores
+
+Después de haber ejecutado el script al menos una vez:
+
+```bash
+# Iniciar el servidor con hot-reload
 npm run start:dev
 ```
 
-### 📄 Documentación
+### 📌 Resumen
+
+| Entorno        | Comandos                                                                 |
+|----------------|--------------------------------------------------------------------------|
+| 🐳 Producción  | `docker compose build` → `docker compose up`                             |
+| 💻 Desarrollo  | **Primera vez:** `npm run build` → `./script.sh`<br>**Siguientes:** `npm run start:dev` |
+
+<br>
+
+# 📄 Documentación
 
 Para ver la documentación de la API REST, visite la siguiente URL:
 

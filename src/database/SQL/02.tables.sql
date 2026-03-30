@@ -49,21 +49,6 @@ CREATE TABLE payment_methods (
     deleted_at TIMESTAMP
 );
 
--- Tabla: configurations
-CREATE TABLE configurations (
-    id_config SERIAL PRIMARY KEY,
-    config_key VARCHAR(100) NOT NULL UNIQUE,
-    config_value TEXT NOT NULL,
-    description TEXT,
-    data_type VARCHAR(20) DEFAULT 'string',
-    is_public BOOLEAN DEFAULT FALSE,
-    category VARCHAR(50) DEFAULT 'general',
-    active BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW(),
-    deleted_at TIMESTAMP
-);
-
 -- Tabla: suppliers
 CREATE TABLE suppliers (
     id_supplier SERIAL PRIMARY KEY,
@@ -149,13 +134,13 @@ CREATE TABLE roles (
 
 CREATE TABLE permissions(
 	id_permission SERIAL PRIMARY KEY,
-	moduleId INTEGER REFERENCES modules(id_module) NOT NULL,
+	id_module INTEGER REFERENCES modules(id_module) NOT NULL,
 	typePermission actions_permissions NOT NULL,
 	active BOOLEAN DEFAULT TRUE,
 	createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	deletedAt TIMESTAMP DEFAULT NULL,
 	updatedAt TIMESTAMP DEFAULT NULL,
-	UNIQUE(moduleId, typePermission)
+	UNIQUE(id_module, typePermission)
 );
 
 CREATE TABLE roles_permissions(
