@@ -129,4 +129,15 @@ export class ReportsController {
 
     return await this.reportsService.getTopSuppliers(startDate, endDate);
   }
+
+  // Entradas y salidas de productos (movimientos)
+  @Docs.getProductMovements()
+  @CheckPermission('READ', 'REPORTS')
+  @UseGuards(VerifyTokenGuard, RolesGuard)
+  @HttpCode(200)
+  @Get('product-movements')
+  async getProductMovements(@Query() query: any) {
+    // Se espera paginación y filtro de fechas en el query
+    return await this.reportsService.getProductMovements(query);
+  }
 }

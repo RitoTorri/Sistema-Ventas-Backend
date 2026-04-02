@@ -1,3 +1,16 @@
+function getProductMovements() {
+    return applyDecorators(
+        ApiOperation({
+            summary: 'Entradas y salidas de productos',
+            description: 'Retorna los movimientos de productos (entradas por compras y salidas por ventas) con paginación y filtro por rango de fechas.'
+        }),
+        ApiQuery({ name: 'startDate', required: false, type: String, example: '2026-01-01' }),
+        ApiQuery({ name: 'endDate', required: false, type: String, example: '2026-12-31' }),
+        ApiQuery({ name: 'page', required: false, type: Number, example: 1 }),
+        ApiQuery({ name: 'limit', required: false, type: Number, example: 10 }),
+        ApiOkResponse({ description: 'Movimientos de productos obtenidos exitosamente' })
+    );
+}
 // reports/documentation.ts
 import { applyDecorators } from '@nestjs/common';
 import { ApiOperation, ApiQuery, ApiOkResponse } from '@nestjs/swagger';
@@ -101,4 +114,5 @@ export default {
     getProductsMinStock,
     getProductsWithoutSales,
     getInventorySummary,
+    getProductMovements,
 };

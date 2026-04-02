@@ -35,6 +35,7 @@ async function runSeed() {
     await queryRunner.startTransaction();
 
     const tableModules = [
+      'REPORTS',
       'CATEGORIES',
       'PRODUCTS',
       'CUSTOMERS',
@@ -58,7 +59,7 @@ async function runSeed() {
     }
 
     console.log('--- Creando Módulos y Permisos ---');
-
+    
     for (const moduleName of tableModules) {
       let mod = await queryRunner.manager.findOne(Modul, {
         where: { name: moduleName },
@@ -88,15 +89,12 @@ async function runSeed() {
           permission = await queryRunner.manager.save(permission);
         }
 
-        const rolePermissionExist = await queryRunner.manager.findOne(
-          RolePermission,
-          {
-            where: {
-              id_role: managerRole.id_role,
-              id_permission: permission.id_permission,
-            },
+        const rolePermissionExist = await queryRunner.manager.findOne(RolePermission, {
+          where: {
+            id_role: managerRole.id_role,
+            id_permission: permission.id_permission,
           },
-        );
+        });
 
         if (!rolePermissionExist) {
           await queryRunner.manager.save(RolePermission, {
@@ -117,14 +115,13 @@ async function runSeed() {
       // Creamos el usuario administrador
       const password = await bcrypt.hash('admin', 10);
       await queryRunner.manager.save(User, {
-        id_role: 1,
+        id_role: managerRole.id_role,
         name: 'admin'.toUpperCase(),
         email: 'admin@admin.com',
         password,
         active: true,
       });
     }
-    console.log('ADMIN creado correctamente.');
 
     await queryRunner.commitTransaction();
   } catch (err) {

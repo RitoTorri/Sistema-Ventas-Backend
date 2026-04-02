@@ -23,10 +23,10 @@ export class Product {
   @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
   price: number;
 
-  @Column({ type: 'int', nullable: true })
+  @Column({ type: 'int', nullable: true, default: 0 })
   stock_current: number;
 
-  @Column({ type: 'int', nullable: true })
+  @Column({ type: 'int', nullable: true, default: 0 })
   stock_min: number;
 
   @Column({ type: 'boolean', default: true })

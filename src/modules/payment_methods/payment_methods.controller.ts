@@ -28,7 +28,7 @@ export class PaymentMethodsController {
   constructor(private readonly paymentMethodsService: PaymentMethodsService) {}
 
   @Docs.createPaymentMethod()
-  @CheckPermission('CREATE', 'PAYMENT_METHOD')
+  @CheckPermission('CREATE', 'PAYMENT_METHODS')
   @UseGuards(VerifyTokenGuard, RolesGuard)
   @Post()
   @HttpCode(201)
@@ -43,7 +43,7 @@ export class PaymentMethodsController {
   }
 
   @Docs.findAllPaymentMethods()
-  @CheckPermission('READ', 'PAYMENT_METHOD')
+  @CheckPermission('READ', 'PAYMENT_METHODS')
   @UseGuards(VerifyTokenGuard, RolesGuard)
   @Get()
   @HttpCode(200)
@@ -55,7 +55,7 @@ export class PaymentMethodsController {
   }
 
   @Docs.updatePaymentMethod()
-  @CheckPermission('UPDATE', 'PAYMENT_METHOD')
+  @CheckPermission('UPDATE', 'PAYMENT_METHODS')
   @UseGuards(VerifyTokenGuard, RolesGuard)
   @Patch(':id')
   @HttpCode(204)
@@ -68,7 +68,7 @@ export class PaymentMethodsController {
   }
 
   @Docs.restorePaymentMethod()
-  @CheckPermission('UPDATE', 'PAYMENT_METHOD')
+  @CheckPermission('UPDATE', 'PAYMENT_METHODS')
   @UseGuards(VerifyTokenGuard, RolesGuard)
   @Patch('restore/:id')
   @HttpCode(204)
@@ -78,7 +78,7 @@ export class PaymentMethodsController {
   }
 
   @Docs.deletePaymentMethod()
-  @CheckPermission('DELETE', 'PAYMENT_METHOD')
+  @CheckPermission('DELETE', 'PAYMENT_METHODS')
   @UseGuards(VerifyTokenGuard, RolesGuard)
   @Delete(':id')
   @HttpCode(204)

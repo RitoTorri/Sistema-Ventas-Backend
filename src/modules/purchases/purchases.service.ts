@@ -24,7 +24,7 @@ export class PurchasesService {
     private readonly productsService: ProductsService,
     private readonly suppliersService: SuppliersService,
     private readonly paymentMethodsService: PaymentMethodsService,
-  ) { }
+  ) {}
 
   async create(createPurchaseDto: CreatePurchaseDto) {
     // 1. Validaciones de existencia (pre-transacción)
@@ -104,13 +104,15 @@ export class PurchasesService {
 
     // 2. Ejecución de la consulta con OR anidado
     const [purchases, total] = await this.purchaseRepository.findAndCount({
-      where: param ? [
-        { ...baseConditions, status: param.toUpperCase() },
-        { ...baseConditions, supplier: { company_name: ILike(`%${param}%`) } },
-        { ...baseConditions, supplier: { rif: param.toUpperCase() } },
-        { ...baseConditions, invoice_number: ILike(`%${param}%`) },
-        { ...baseConditions, status: param.toUpperCase() },
-      ] : baseConditions, // Si no hay param, solo usa las condiciones base
+      where: param
+        ? [
+            { ...baseConditions, status: param.toUpperCase() },
+            { ...baseConditions, supplier: { company_name: ILike(`%${param}%`) } },
+            { ...baseConditions, supplier: { rif: param.toUpperCase() } },
+            { ...baseConditions, invoice_number: ILike(`%${param}%`) },
+            { ...baseConditions, status: param.toUpperCase() },
+          ]
+        : baseConditions, // Si no hay param, solo usa las condiciones base
       take: limit,
       skip: (page - 1) * limit,
       relations: ['supplier', 'payment_method'], // Relaciones necesarias
@@ -137,7 +139,7 @@ export class PurchasesService {
           name: true,
           active: true,
         },
-      }
+      },
     });
 
     // 3. Estructura de respuesta que solicitaste
@@ -183,11 +185,12 @@ export class PurchasesService {
           // Incrementar stock
           await this.productsService.incremetnStock(item.id_product, item.quantity);
 
-          const newPrice = item.cost_price + (item.cost_price * percentage / 100);
+          const newPrice = (Number(item.cost_price) + (Number(item.cost_price) * percentage) / 100).toFixed(2);
+          console.log('Precio nuevo: ' + newPrice);
 
           await manager.update(Product, item.id_product, {
-            price: parseFloat(newPrice.toFixed(2)),
-            updated_at: new Date()
+            price: Number(newPrice),
+            updated_at: new Date(),
           });
         }
       }
@@ -201,8 +204,17 @@ export class PurchasesService {
   async findPurchaseById(id: number) {
     return await this.purchaseRepository.findOne({
       where: { id_purchase: id },
-      select: ['id_purchase', 'id_supplier', 'id_payment_method', 'total_amount', 'purchase_date', 'invoice_number', 'purchase_status', 'created_at'],
-      withDeleted: true
+      select: [
+        'id_purchase',
+        'id_supplier',
+        'id_payment_method',
+        'total_amount',
+        'purchase_date',
+        'invoice_number',
+        'purchase_status',
+        'created_at',
+      ],
+      withDeleted: true,
     });
   }
 }

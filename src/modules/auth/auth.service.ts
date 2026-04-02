@@ -35,8 +35,8 @@ export class AuthService {
         name: user.name,
         email: user.email,
         role: { roleId: user.id_role, name: user.role.name },
+        tokens: tokenAccess,
         permissions: permissions,
-        tokens: tokenAccess
       };
 
     } catch (error) { throw error; }

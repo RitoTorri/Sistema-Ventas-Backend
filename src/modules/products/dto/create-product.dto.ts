@@ -39,15 +39,6 @@ export class CreateProductDto {
     price: number;
 
     @ApiProperty({
-        description: 'Cantidad inicial en almacén',
-        example: 10,
-        default: 0,
-    })
-    @IsInt()
-    @Min(0)
-    stock_current: number;
-
-    @ApiProperty({
         description: 'Cantidad minima de stock por producto',
         example: 10,
         default: 0,
