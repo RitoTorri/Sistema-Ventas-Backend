@@ -98,7 +98,7 @@ El sistema está pensado para manejar el flujo completo de una transacción come
 
 ### ⌨️ Codigo de la Base de datos
 
-Puedes ver el codigo de la base de datos [📍Aqui](https://github.com/RitoTorri/Sistema-Ventas-Backend/tree/main/database/SQL)
+Puedes ver el codigo de la base de datos [📍Aqui](https://github.com/RitoTorri/Sistema-Ventas-Backend/tree/main/src/database/SQL)
 
 <br>
 
