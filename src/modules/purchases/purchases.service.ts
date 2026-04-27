@@ -115,7 +115,7 @@ export class PurchasesService {
         : baseConditions, // Si no hay param, solo usa las condiciones base
       take: limit,
       skip: (page - 1) * limit,
-      relations: ['supplier', 'payment_method'], // Relaciones necesarias
+      relations: ['supplier', 'payment_method', 'items'], // Relaciones necesarias
       order: { id_purchase: 'ASC' }, // Compras más recientes primero
       withDeleted: true,
       select: {
@@ -124,20 +124,26 @@ export class PurchasesService {
         purchase_status: true,
         purchase_date: true,
         total_amount: true,
-        created_at: true,
-        updated_at: true,
         supplier: {
           id_supplier: true,
           company_name: true,
           rif: true,
           email: true,
           phone: true,
-          active: true,
         },
         payment_method: {
-          id_payment_method: true,
           name: true,
-          active: true,
+        },
+        items: {
+          id_purchase_item: true,
+          product: {
+            id_product: true,
+            name: true,
+            sku: true,
+          },
+          quantity: true,
+          cost_price: true,
+          subtotal: true,
         },
       },
     });

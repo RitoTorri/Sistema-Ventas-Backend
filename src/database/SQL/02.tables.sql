@@ -1,5 +1,5 @@
 -- Tabla: categories
-CREATE TABLE categories (
+CREATE TABLE IF NOT EXISTS categories (
     id_category SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL UNIQUE, -- EN MAYUSCULAS
     description TEXT,
@@ -10,15 +10,14 @@ CREATE TABLE categories (
 );
 
 -- Tabla: products
-CREATE TABLE products (
+CREATE TABLE IF NOT EXISTS products (
     id_product SERIAL PRIMARY KEY,
     id_category INT NOT NULL,
     name VARCHAR(255) NOT NULL UNIQUE, -- EN MAYUSCULAS
     sku VARCHAR(50) NOT NULL UNIQUE,
     price DECIMAL(10,2) NOT NULL,
-    stock_current INT NOT NULL,
-    stock_min INT NOT NULL,
-    stock_max INT,
+    stock_current INT NOT NULL DEFAULT 0,
+    stock_min INT NOT NULL DEFAULT 0,
     active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW(),
@@ -26,10 +25,10 @@ CREATE TABLE products (
 );
 
 -- Tabla: customers
-CREATE TABLE customers (
+CREATE TABLE IF NOT EXISTS customers (
     id_customer SERIAL PRIMARY KEY,
-    first_name VARCHAR(100) NOT NULL, -- EN MAYUSCULAS
-    last_name VARCHAR(100) NOT NULL, -- EN MAYUSCULAS
+    first_name VARCHAR(100) NOT NULL, 
+    last_name VARCHAR(100) NOT NULL,
     ci VARCHAR(30) NOT NULL UNIQUE,
     email VARCHAR(255) UNIQUE,
     phone VARCHAR(20) UNIQUE,
@@ -40,7 +39,7 @@ CREATE TABLE customers (
 );
 
 -- Tabla: payment_methods
-CREATE TABLE payment_methods (
+CREATE TABLE IF NOT EXISTS payment_methods (
     id_payment_method SERIAL PRIMARY KEY,
     name VARCHAR(50) NOT NULL UNIQUE, -- EN MAYUSCULAS
     active BOOLEAN DEFAULT TRUE,
@@ -50,7 +49,7 @@ CREATE TABLE payment_methods (
 );
 
 -- Tabla: suppliers
-CREATE TABLE suppliers (
+CREATE TABLE IF NOT EXISTS suppliers (
     id_supplier SERIAL PRIMARY KEY,
     rif VARCHAR(20) NOT NULL UNIQUE,
     company_name VARCHAR(255) NOT NULL, -- EN MAYUSCULAS
@@ -65,7 +64,7 @@ CREATE TABLE suppliers (
 );
 
 -- Tabla: sales (SIN active)
-CREATE TABLE sales (
+CREATE TABLE IF NOT EXISTS sales (
     id_sale SERIAL PRIMARY KEY,
     id_customer INT NOT NULL,
     id_payment_method INT NOT NULL,
@@ -78,7 +77,7 @@ CREATE TABLE sales (
 );
 
 -- Tabla: sales_items (SIN active)
-CREATE TABLE sales_items (
+CREATE TABLE IF NOT EXISTS sales_items (
     id_sale_items SERIAL PRIMARY KEY,
     id_sale INT NOT NULL,
     id_product INT NOT NULL,
@@ -89,7 +88,7 @@ CREATE TABLE sales_items (
 );
 
 -- Tabla: purchases (SIN active)
-CREATE TABLE purchases (
+CREATE TABLE IF NOT EXISTS purchases (
     id_purchase SERIAL PRIMARY KEY,
     id_payment_method INT NOT NULL,
     id_supplier INT NOT NULL,
@@ -102,7 +101,7 @@ CREATE TABLE purchases (
 );
 
 -- Tabla: purchases_items (SIN active)
-CREATE TABLE purchases_items (
+CREATE TABLE IF NOT EXISTS purchases_items (
     id_purchase_details SERIAL PRIMARY KEY,
     id_purchase INT NOT NULL,
     id_product INT NOT NULL,
@@ -113,7 +112,7 @@ CREATE TABLE purchases_items (
 );
 
 -- Table: modules
-CREATE TABLE modules (
+CREATE TABLE IF NOT EXISTS modules (
 	id_module SERIAL PRIMARY KEY,
 	name VARCHAR(50) UNIQUE NOT NULL UNIQUE, -- EN MAYUSCULAS
 	active BOOLEAN DEFAULT TRUE,
@@ -123,7 +122,7 @@ CREATE TABLE modules (
 );
 
 -- Table: roles
-CREATE TABLE roles (
+CREATE TABLE IF NOT EXISTS roles (
 	id_role SERIAL PRIMARY KEY,
 	name VARCHAR(40) UNIQUE NOT NULL UNIQUE, -- EN MAYUSCULAS
 	active BOOLEAN DEFAULT TRUE,
@@ -132,7 +131,7 @@ CREATE TABLE roles (
 	updatedAt TIMESTAMP DEFAULT NULL
 );
 
-CREATE TABLE permissions(
+CREATE TABLE IF NOT EXISTS permissions(
 	id_permission SERIAL PRIMARY KEY,
 	id_module INTEGER REFERENCES modules(id_module) NOT NULL,
 	typePermission actions_permissions NOT NULL,
@@ -143,7 +142,7 @@ CREATE TABLE permissions(
 	UNIQUE(id_module, typePermission)
 );
 
-CREATE TABLE roles_permissions(
+CREATE TABLE IF NOT EXISTS roles_permissions(
 	id_role_permission SERIAL PRIMARY KEY, 
 	id_role INTEGER REFERENCES roles(id_role),
 	id_permission INTEGER REFERENCES permissions(id_permission),
@@ -154,7 +153,7 @@ CREATE TABLE roles_permissions(
 	UNIQUE(id_role, id_permission)
 );
 
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
 	id_user SERIAL PRIMARY KEY,
 	id_role INTEGER REFERENCES roles(id_role) NOT NULL,
 	name VARCHAR(100) NOT NULL, -- EN MAYUSCULAS

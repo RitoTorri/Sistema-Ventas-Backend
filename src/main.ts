@@ -2,7 +2,9 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { ValidationPipe, Logger } from '@nestjs/common';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { SwaggerModule } from '@nestjs/swagger';
+
+import { configSwagger } from './config/swagger.config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -29,29 +31,7 @@ async function bootstrap() {
     }),
   );
 
-  const config = new DocumentBuilder()
-    .setTitle('Sistema de Ventas')
-    .setDescription('API REST para el sistema de ventas')
-    .setVersion('1.0')
-    .addServer(`http://localhost:${port}`)
-    .setContact(
-      'Jesus Francisco Cortez Torres',
-      'https://rito-torri-mi-portfolio.netlify.app/',
-      'cortezfrancisco025@gmail.com',
-    )
-    .addBearerAuth(
-      {
-        type: 'http',
-        scheme: 'bearer',
-        bearerFormat: 'JWT',
-        name: 'JWT',
-        description: 'Ingresa tu token JWT',
-        in: 'header',
-      },
-      'access-token', // Este es el nombre interno de la estrategia
-    )
-    .build();
-  const documentFactory = () => SwaggerModule.createDocument(app, config);
+  const documentFactory = () => SwaggerModule.createDocument(app, configSwagger);
   SwaggerModule.setup('docs', app, documentFactory);
 
   await app.listen(port);

@@ -118,7 +118,7 @@ export class SalesService {
       ] : baseConditions, // Si no hay param, solo usa las condiciones base
       take: limit,
       skip: (page - 1) * limit,
-      relations: ['customer', 'payment_method'], // Relaciones necesarias
+      relations: ['customer', 'payment_method', 'items'], // Relaciones necesarias
       order: { id_sale: 'DESC' }, // Ventas más recientes primero
       withDeleted: true,
       select: {
@@ -127,8 +127,6 @@ export class SalesService {
         sale_status: true,
         sale_date: true,
         total_amount: true,
-        created_at: true,
-        updated_at: true,
         customer: {
           id_customer: true,
           first_name: true,
@@ -136,13 +134,21 @@ export class SalesService {
           ci: true,
           email: true,
           phone: true,
-          active: true,
         },
         payment_method: {
-          id_payment_method: true,
           name: true,
-          active: true,
         },
+        items: {
+          id_sale_item: true,
+          product: {
+            id_product: true,
+            name: true,
+            sku: true,
+          },
+          quantity: true,
+          unit_price: true,
+          subtotal: true,
+        }
       }
     });
 
