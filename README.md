@@ -169,7 +169,7 @@ npm run start:dev
 
 <br>
 
-# 👨‍💼 Usuario Administador
+# 👨‍💼 Usuario Administrador
 
 El usuario administrador se crea en los scripts de inicialización, Las credenciales del usuario administrador son:
 
